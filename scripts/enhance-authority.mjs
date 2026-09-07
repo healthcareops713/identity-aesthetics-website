@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const publicDir = path.resolve('public');
-const base = 'https://identity-aesthetics-website.identity-aes-0781.chatgpt.site';
+const base = 'https://713botoxme.com';
 const modified = '2026-08-05';
 const orgId = `${base}/#organization`;
 const siteId = `${base}/#website`;

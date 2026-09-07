@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const out = path.resolve("public");
-const base = "https://identity-aesthetics-website.identity-aes-0781.chatgpt.site/";
+const base = "https://713botoxme.com/";
 const booking = "https://www.fresha.com/providers/identity-aesthetic-center-llc-a7mjsu33";
 const reviewed = "July 30, 2026";
 
