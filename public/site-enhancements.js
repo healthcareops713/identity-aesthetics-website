@@ -292,7 +292,7 @@
     {title:"Meet Our Providers",category:"Providers",url:"team.html",description:"Meet Identity Aesthetics physicians, injectors, estheticians and leadership.",terms:"team providers doctor physician injector esthetician staff equipo medicos proveedores inyectoras esteticistas"},
     {title:"Dallas Alvey, MD, DDS, Chief Medical Officer",category:"Providers",url:"team-dallas-alvey.html",description:"Chief Medical Officer with dual medical and dental training in facial anatomy and wellness.",terms:"dallas alvey doctor physician injector hormone peptide chief medical officer medico inyector"},
     {title:"Ike Nwanonyiri, MD",category:"Providers",url:"team-ike-nwanonyiri.html",description:"Board-certified family medicine physician and Chief Medical Officer with experience in primary care, athlete care, men's health and regenerative medicine.",terms:"ike nwanonyiri doctor physician chief medical officer family medicine primary care sports athlete men health regenerative medical reviewer telehealth medico"},
-    {title:"Astrid Ariano, Licensed Medical Aesthetician",category:"Providers",url:"team-astrid-ariano.html",description:"Advanced corrective skincare, facials, microneedling, peels and dermaplaning.",terms:"astrid ariano esthetician facial microneedling chemical peel dermaplaning esteticista"},
+    {title:"Astrid Ariano, Licensed Esthetician",category:"Providers",url:"team-astrid-ariano.html",description:"Advanced corrective skincare, facials, microneedling, peels and dermaplaning.",terms:"astrid ariano esthetician facial microneedling chemical peel dermaplaning esteticista"},
     {title:"Patrisia L., CLT",category:"Providers",url:"team-patrisia-l.html",description:"Meet Identity Aesthetics Aesthetic Consultant and Certified Laser Technician Patrisia L., CLT.",terms:"Patrisia Patricia aesthetic consultant facial rejuvenation certified laser technician CLT facility operations"},
     {title:"Dameon Tryon, Chief Executive Officer",category:"Leadership",url:"team-dameon-tryon.html",description:"Meet the executive leader guiding Identity Aesthetics strategy, operations, technology, pharmaceutical operations, growth and marketing.",terms:"Dameon Tryon chief executive officer CEO leadership business development strategy franchising pharmaceutical operations information technology IT marketing advertising"},
     {title:"Telehealth Visits",category:"Resources",url:"telehealth.html",description:"Learn how eligible patients can begin care from home in Texas, North Carolina and South Carolina.",terms:"telehealth virtual visit home texas north carolina south carolina online telesalud consulta virtual casa"},
@@ -547,7 +547,7 @@
         groups: [
           { title: "Medical Leadership", links: [["Dallas Alvey, MD, DDS, Chief Medical Officer", "team-dallas-alvey.html"], ["Ike Nwanonyiri, MD", "team-ike-nwanonyiri.html"]] },
           { title: "Advanced & Aesthetic Care", links: [["Sarah Walker, APRN, FNP-C", "team-sarah-walker.html"], ["Astrid A., Licensed Esthetician", "team-astrid-ariano.html"], ["Patrisia L., CLT", "team-patrisia-l.html"]] },
-          { title: "Leadership & Support", links: [["Dameon Tryon, Chief Executive Officer", "team-dameon-tryon.html"], ["Samantha F., Patient Liason", "team.html"], ["Book a Consultation", "book-consultation.html"]] }
+          { title: "Leadership & Support", links: [["Dameon Tryon, Chief Executive Officer", "team-dameon-tryon.html"], ["Samantha F., Patient Liaison", "team.html"], ["Book a Consultation", "book-consultation.html"]] }
         ]
       },
       {
@@ -562,7 +562,7 @@
         groups: [
           { title: "Conroe", links: [["3508 W. Davis St · 77304", "locations.html#conroe"], ["Book Conroe", "book-consultation.html?location=Conroe"]] },
           { title: "Houston", links: [["6806 Long Point Rd · 77055", "locations.html#houston"], ["Book Houston", "book-consultation.html?location=Houston"]] },
-          { title: "Fulshear", links: [["30417 5th St · 77441", "locations.html#fulshear"], ["Book Fulshear", "book-consultation.html?location=Fulshear"]] },
+          { title: "Fulshear", links: [["30417 5th St Ste C · 77441", "locations.html#fulshear"], ["Directions", "https://www.google.com/maps/search/?api=1&query=30417+5th+St+Ste+C%2C+Fulshear%2C+TX+77441", true], ["Book Fulshear", "book-consultation.html?location=Fulshear"]] },
           { title: "Katy", links: [["1227 Grand W Blvd · 77449", "locations.html#katy"], ["Book Katy", "book-consultation.html?location=Katy"]] },
           { title: "Kingwood", links: [["2610 Chestnut Ridge Rd · 77339", "https://identityaestheticskingwood.com/", true], ["Visit Kingwood Website ↗", "https://identityaestheticskingwood.com/", true]] },
           { title: "Telehealth", links: [["Texas · North Carolina · South Carolina", "telehealth.html"], ["Explore Virtual Care", "telehealth.html"]] }
@@ -571,7 +571,7 @@
           { label: "All Locations", href: "locations.html" },
           { label: "Conroe — 3508 W. Davis St", href: "locations.html#conroe" },
           { label: "Houston — 6806 Long Point Rd", href: "locations.html#houston" },
-          { label: "Fulshear — 30417 5th St", href: "locations.html#fulshear" },
+          { label: "Fulshear — 30417 5th St Ste C", href: "locations.html#fulshear" },
           { label: "Katy — 1227 Grand W Blvd", href: "locations.html#katy" },
           { label: "Kingwood — Visit Location Website ↗", href: "https://identityaestheticskingwood.com/", external: true },
           { label: "Telehealth — TX · NC · SC", href: "telehealth.html" },

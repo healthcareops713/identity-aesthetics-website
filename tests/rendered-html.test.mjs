@@ -357,6 +357,23 @@ test("publishes a structured, site-wide patient FAQ", async () => {
   assert.match(sitemap, /faq\.html/);
 });
 
+test("uses the current Fulshear address across location surfaces", async () => {
+  const homepage = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
+  const locations = await readFile(new URL("../public/locations.html", import.meta.url), "utf8");
+  const enhancements = await readFile(new URL("../public/site-enhancements.js", import.meta.url), "utf8");
+  const authorityGenerator = await readFile(new URL("../scripts/enhance-authority.mjs", import.meta.url), "utf8");
+
+  for (const source of [homepage, locations, enhancements, authorityGenerator]) {
+    assert.doesNotMatch(source, /28432 FM 1093|Ste F/);
+  }
+  assert.match(homepage, /30417 5th St Ste C/);
+  assert.match(locations, /"streetAddress":"30417 5th St Ste C"/);
+  assert.match(locations, /query=30417\+5th\+St\+Ste\+C%2C\+Fulshear%2C\+TX\+77441/);
+  assert.match(enhancements, /30417 5th St Ste C · 77441/);
+  assert.match(enhancements, /Fulshear — 30417 5th St Ste C/);
+  assert.match(authorityGenerator, /30417 5th St Ste C/);
+});
+
 test("uses the enhanced Identity wall image softly in the closing band on every page", async () => {
   const peptideCss = await readFile(new URL("../public/peptide-education.css", import.meta.url), "utf8");
   const pages = [

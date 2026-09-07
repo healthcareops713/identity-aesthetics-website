@@ -99,8 +99,8 @@ function centralGraph(file, html, clinical) {
   const graph = [
     {
       '@type':['Organization','MedicalBusiness'], '@id':orgId,
-      name:'Identity Aesthetics', alternateName:'713 Botox Me', url:`${base}/`,
-      logo:{'@type':'ImageObject',url:`${base}/images/identity-aesthetics-logo.webp`},
+      name:'Identity Aesthetics', legalName:'Identity Aesthetics PLLC', alternateName:'713 Botox Me', url:`${base}/`,
+      logo:{'@type':'ImageObject',url:`${base}/images/identity-aesthetics-logo-best-slim-gold.png`},
       telephone:'+1-713-268-6963', email:'info@713botoxme.com', foundingDate:'2011',
       medicalSpecialty:['Aesthetic Medicine','Endocrinology','Dermatology'],
       areaServed:[{'@type':'State','name':'Texas'},{'@type':'State','name':'North Carolina'},{'@type':'State','name':'South Carolina'}],
@@ -131,7 +131,7 @@ function centralGraph(file, html, clinical) {
     const locations = [
       ['conroe','Identity Aesthetics — Conroe','3508 W. Davis St','Conroe','77304'],
       ['houston','Identity Aesthetics — Houston','6806 Long Point Rd, Suite C','Houston','77055'],
-      ['fulshear','Identity Aesthetics — Fulshear','28432 FM 1093, Ste F','Fulshear','77441']
+      ['fulshear','Identity Aesthetics — Fulshear','30417 5th St Ste C','Fulshear','77441']
     ];
     for (const [slug,name,street,city,zip] of locations) graph.push({
       '@type':'MedicalBusiness','@id':`${base}/locations.html#${slug}`,name,url:`${base}/locations.html#${slug}`,
@@ -142,9 +142,9 @@ function centralGraph(file, html, clinical) {
   if (file === 'team.html') {
     const people = [
       ['Ike Nwanonyiri, MD','MD','Chief Medical Officer'],['Sarah Walker, APRN, FNP-C','APRN, FNP-C','Advanced Provider and Nutritionist'],
-      ['Astrid Ariano','','Licensed Medical Aesthetician'],
-      ['Patricia, CLT','CLT','Office Administrator & Director'],['Samantha','','Front Office Manager'],
-      ['Dameon Tryon','','Chief Operating Officer']
+      ['Astrid Ariano','','Licensed Esthetician'],
+      ['Patricia, CLT','CLT','Office Administrator & Director'],['Samantha','','Patient Liaison'],
+      ['Dameon Tryon','','Chief Executive Officer']
     ];
     for (const [name,suffix,role] of people) graph.push({'@type':'Person',name,honorificSuffix:suffix||undefined,jobTitle:role,worksFor:{'@id':orgId}});
   }
