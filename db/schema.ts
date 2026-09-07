@@ -1,0 +1,37 @@
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+
+export const consultationSubmissions = sqliteTable(
+  "consultation_submissions",
+  {
+    id: text("id").primaryKey(),
+    submittedAt: text("submitted_at").notNull(),
+    name: text("name").notNull(),
+    phone: text("phone").notNull(),
+    email: text("email").notNull(),
+    interest: text("interest").notNull(),
+    careMode: text("care_mode").notNull(),
+    location: text("location").notNull(),
+    provider: text("provider"),
+    contactPreference: text("contact_preference").notNull(),
+    notes: text("notes"),
+    source: text("source"),
+    requestContactDisclosureVersion: text("request_contact_disclosure_version").notNull(),
+    marketingConsent: integer("marketing_consent", { mode: "boolean" }).notNull(),
+    smsConsentVersion: text("sms_consent_version"),
+    smsConsentClientTimestamp: text("sms_consent_client_timestamp"),
+    smsConsentServerTimestamp: text("sms_consent_server_timestamp"),
+    smsConsentSourceUrl: text("sms_consent_source_url"),
+    smsConsentDisclosure: text("sms_consent_disclosure"),
+    verificationTokenHash: text("verification_token_hash").notNull(),
+    ipHash: text("ip_hash").notNull(),
+    userAgent: text("user_agent"),
+    emailStatus: text("email_status").notNull(),
+    emailMessageId: text("email_message_id"),
+    emailUpdatedAt: text("email_updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("consultation_verification_token_unique").on(table.verificationTokenHash),
+    index("consultation_ip_submitted_idx").on(table.ipHash, table.submittedAt),
+    index("consultation_email_status_idx").on(table.emailStatus, table.submittedAt),
+  ],
+);

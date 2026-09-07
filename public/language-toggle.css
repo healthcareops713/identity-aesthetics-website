@@ -1,0 +1,10 @@
+.language-switcher{display:inline-flex;align-items:center;gap:2px;margin-left:auto;padding:3px;border:1px solid rgba(217,188,127,.38);border-radius:999px;background:rgba(255,255,255,.06);font-family:'Jost',sans-serif}
+.language-switcher button{min-width:34px;padding:4px 8px;border:0;border-radius:999px;background:transparent;color:#cfc6b7;font:500 10px/1.2 'Jost',sans-serif;letter-spacing:.14em;cursor:pointer;transition:.2s}
+.language-switcher button:hover,.language-switcher button:focus-visible{color:#fff;outline:1px solid rgba(217,188,127,.55)}
+.language-switcher button.active{background:linear-gradient(120deg,#d9bc7f,#9f7f40);color:#17130f;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.translation-notice{display:none;background:#f5ecd8;border-bottom:1px solid rgba(140,103,42,.24);color:#675337;padding:8px 24px;text-align:center;font:400 11px/1.5 'Jost',sans-serif;letter-spacing:.04em}
+.translation-notice.show{display:block}
+#google_translate_element{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+.goog-te-banner-frame,.goog-te-balloon-frame,#goog-gt-tt,.goog-te-spinner-pos{display:none!important}
+body{top:0!important}
+@media(max-width:759px){.topbar .wrap{gap:8px}.topbar .wrap>span{white-space:nowrap}.language-switcher{margin-left:0}.language-switcher button{min-width:31px;padding:4px 6px}}
