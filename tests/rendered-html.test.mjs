@@ -5,7 +5,7 @@ import test from "node:test";
 // Pages that exist for internal use and are deliberately excluded from the
 // patient-facing surface: noindex, absent from the sitemap, and not expected
 // to carry the site chrome.
-const INTERNAL_PAGES = new Set(["animated-logo-preview.html"]);
+const INTERNAL_PAGES = new Set(["animated-logo-preview"]);
 const patientPages = (names) =>
   names.filter((name) => name.endsWith(".html") && !INTERNAL_PAGES.has(name));
 
@@ -80,29 +80,29 @@ test("injects the approved Ageless embed launcher into every HTML response", asy
 
 test("promotes telehealth consistently across every public page", async () => {
   const pages = [
-    "index.html",
-    "injectables.html",
-    "medspa.html",
-    "weight-loss.html",
-    "peptides.html",
-    "peptide-education.html",
-    "locations.html",
-    "about.html",
-    "team.html",
-    "contact.html",
-    "telehealth.html",
-    "payment-plans.html",
-    "glo2facial-treatments.html",
-    "virtual-preview.html",
-    "faq.html",
-    "peptide-approved.html",
-    "peptide-research.html",
-    "peptide-safety.html",
+    "index",
+    "injectables",
+    "medspa",
+    "weight-loss",
+    "peptides",
+    "peptide-education",
+    "locations",
+    "about",
+    "team",
+    "contact",
+    "telehealth",
+    "payment-plans",
+    "glo2facial-treatments",
+    "virtual-preview",
+    "faq",
+    "peptide-approved",
+    "peptide-research",
+    "peptide-safety",
   ];
 
   for (const page of pages) {
     const html = await readFile(new URL(`../public/${page}`, import.meta.url), "utf8");
-    assert.match(html, /href="telehealth\.html"/, `${page} should link to telehealth`);
+    assert.match(html, /href="telehealth"/, `${page} should link to telehealth`);
     assert.match(html, /Book a Telehealth Visit/, `${page} should show the telehealth call to action`);
   }
 });
@@ -139,10 +139,10 @@ test("publishes functional legal, offers and treatment-resource pages", async ()
   assert.match(guides, /Do not stop anticoagulants, aspirin or any prescribed medicine/);
   assert.match(guides, /skin becoming white, gray or blue/);
   assert.match(guides, /No tightening, sexual-function or urinary outcome can be guaranteed/);
-  assert.match(home, /href="memberships-offers\.html"/);
-  assert.match(home, /href="treatment-guides\.html"/);
+  assert.match(home, /href="memberships-offers"/);
+  assert.match(home, /href="treatment-guides"/);
   for (const slug of ["privacy", "terms", "accessibility", "memberships-offers", "treatment-guides"]) {
-    assert.match(sitemap, new RegExp(`${slug}\\.html`));
+    assert.match(sitemap, new RegExp(`${slug}`));
   }
 });
 
@@ -197,10 +197,10 @@ test("publishes a crawlable, evidence-separated peptide education hub", async ()
   assert.match(safety, /503A and 503B are/);
   assert.match(safety, /What LegitScript can/);
   assert.match(safety, /FDA MedWatch/);
-  assert.match(sitemap, /peptide-approved\.html/);
-  assert.match(sitemap, /peptide-education\.html/);
-  assert.match(sitemap, /peptide-research\.html/);
-  assert.match(sitemap, /peptide-safety\.html/);
+  assert.match(sitemap, /peptide-approved/);
+  assert.match(sitemap, /peptide-education/);
+  assert.match(sitemap, /peptide-research/);
+  assert.match(sitemap, /peptide-safety/);
   assert.match(robots, /Sitemap:/);
   assert.match(llms, /Peptide Education Center/);
 });
@@ -212,7 +212,7 @@ test("separates patient peptide consultations from the evidence hub without unsu
   assert.match(service, /Schedule an In-Office Consultation/);
   assert.match(service, /Schedule a Telehealth Consultation/);
   assert.match(service, /do not necessarily mean peptide therapy is appropriate/);
-  assert.match(service, /href="peptide-education\.html"/);
+  assert.match(service, /href="peptide-education"/);
   assert.doesNotMatch(hub, /strong safety profile/);
   assert.doesNotMatch(hub, /promotes steady, natural growth hormone release/);
   assert.doesNotMatch(hub, /deeper sleep, improved recovery, leaner body composition/);
@@ -236,7 +236,7 @@ test("publishes indexable individual evidence guides for high-interest peptides"
     assert.match(html, /MedicalWebPage/);
     assert.match(html, /Evidence Before Treatment/);
     assert.match(html, /Source review date:/);
-    assert.match(sitemap, new RegExp(`peptide-${slug}\\.html`));
+    assert.match(sitemap, new RegExp(`peptide-${slug}`));
   }
 });
 
@@ -282,7 +282,7 @@ test("publishes the configured Cherry payment plans experience", async () => {
   assert.match(html, /href="#howitworks"[^>]*>Powered by Cherry<\/a>/);
   assert.doesNotMatch(html, /<span>Fast application<\/span>/);
   assert.match(html, /url\('images\/payment-plans-hero\.webp'\)/);
-  assert.match(sitemap, /payment-plans\.html/);
+  assert.match(sitemap, /payment-plans/);
 });
 
 test("shows peptide education and payment plans in the homepage menu", async () => {
@@ -293,7 +293,7 @@ test("shows peptide education and payment plans in the homepage menu", async () 
 
   // The desktop menu is a curated shortlist and the mobile menu is the full
   // index, so a destination only has to be reachable from one of them.
-  for (const href of ["peptide-education.html", "payment-plans.html"]) {
+  for (const href of ["peptide-education", "payment-plans"]) {
     assert.ok(menu.includes(`href="${href}"`), `${href} should be reachable from the homepage menu`);
   }
   assert.ok(desktopNav.length > 0, "the homepage should have a desktop menu");
@@ -308,13 +308,13 @@ test("uses the same navigation on every patient page", async () => {
     return [...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
   };
 
-  const home = navOf(await read("index.html"));
+  const home = navOf(await read("index"));
   assert.ok(home.length > 0, "the homepage must have a desktop nav to compare against");
 
   // Journal articles carry one extra link back to the journal index. That is
   // the only sanctioned difference; anything else is drift and the menu should
   // not change under a visitor as they move around the site.
-  const ALLOWED_EXTRA = new Set(["journal.html"]);
+  const ALLOWED_EXTRA = new Set(["journal"]);
 
   const problems = [];
   for (const page of patientPages(pages)) {
@@ -363,7 +363,7 @@ test("publishes the Meet the Team page with provider-specific booking options", 
   assert.deepEqual(orphaned, [], "these provider bio pages exist but are not linked from any team card");
   assert.ok(linked.size >= 5, `expected the team page to link several bios, found ${linked.size}`);
   const desktopNav = html.match(/<nav class="links">([\s\S]*?)<\/nav>/)?.[1] ?? "";
-  assert.equal((desktopNav.match(/href="team\.html"/g) ?? []).length, 1);
+  assert.equal((desktopNav.match(/href="team"/g) ?? []).length, 1);
   assert.ok(
     html.indexOf('<article class="team-card" data-person="ike"') < html.indexOf('<article class="team-card" data-person="dallas"'),
     "Ike and Dallas should lead the page together",
@@ -377,7 +377,7 @@ test("publishes the Meet the Team page with provider-specific booking options", 
   assert.match(html, /Business Development/);
   assert.match(html, /Strategic Planning/);
   assert.match(html, /Franchising/);
-  assert.match(sitemap, /team\.html/);
+  assert.match(sitemap, /team/);
 });
 
 test("publishes a structured, site-wide patient FAQ", async () => {
@@ -389,7 +389,7 @@ test("publishes a structured, site-wide patient FAQ", async () => {
   assert.match(faq, /GLP-1 weight loss &amp; peptide care/);
   assert.match(faq, /Telehealth from home/);
   assert.match(faq, /Does the AI preview predict or guarantee my result\?/);
-  assert.match(sitemap, /faq\.html/);
+  assert.match(sitemap, /faq/);
 });
 
 test("uses the current Fulshear address across location surfaces", async () => {
@@ -412,24 +412,24 @@ test("uses the current Fulshear address across location surfaces", async () => {
 test("uses the enhanced Identity wall image softly in the closing band on every page", async () => {
   const peptideCss = await readFile(new URL("../public/peptide-education.css", import.meta.url), "utf8");
   const pages = [
-    "index.html",
-    "injectables.html",
-    "medspa.html",
-    "weight-loss.html",
-    "peptides.html",
-    "peptide-education.html",
-    "locations.html",
-    "about.html",
-    "contact.html",
-    "telehealth.html",
-    "payment-plans.html",
-    "glo2facial-treatments.html",
-    "virtual-preview.html",
+    "index",
+    "injectables",
+    "medspa",
+    "weight-loss",
+    "peptides",
+    "peptide-education",
+    "locations",
+    "about",
+    "contact",
+    "telehealth",
+    "payment-plans",
+    "glo2facial-treatments",
+    "virtual-preview",
   ];
 
   for (const page of pages) {
     const html = await readFile(new URL(`../public/${page}`, import.meta.url), "utf8");
-    const usesSharedStyles = ["peptides.html", "peptide-education.html", "payment-plans.html", "glo2facial-treatments.html", "virtual-preview.html"].includes(page);
+    const usesSharedStyles = ["peptides", "peptide-education", "payment-plans", "glo2facial-treatments", "virtual-preview"].includes(page);
     const styles = usesSharedStyles ? `${html}\n${peptideCss}` : html;
     assert.match(styles, /url\('images\/identity-signature-wall\.webp'\)/, `${page} should use the signature wall image`);
     assert.match(styles, /linear-gradient\(rgba\(20,17,13,\.84\),rgba\(20,17,13,\.84\)\)/, `${page} should preserve text contrast`);
@@ -443,14 +443,14 @@ test("links the Med Spa Glo2Facial card to a current treatment options guide", a
   const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   const currentOptions = ["ExoFirm", "Hydrate", "Brighten", "Protect", "Refine", "Smooth", "Energize", "Clarify"];
 
-  assert.match(medspa, /href="glo2facial-treatments\.html">Treatment Options<\/a>/);
+  assert.match(medspa, /href="glo2facial-treatments">Treatment Options<\/a>/);
   for (const option of currentOptions) {
     assert.match(guide, new RegExp(`>${option}<`), `guide should include ${option}`);
     assert.match(guide, new RegExp(`glo2facial\/${option.toLowerCase()}\\.jpg`), `guide should use the ${option} image`);
   }
   assert.doesNotMatch(guide, />Firm</);
   assert.doesNotMatch(guide, />Detox</);
-  assert.match(sitemap, /glo2facial-treatments\.html/);
+  assert.match(sitemap, /glo2facial-treatments/);
 });
 
 test("publishes the authorized Geneo guide as a complete internal luxury resource", async () => {
@@ -487,7 +487,7 @@ test("configures and promotes the supplied Ageless virtual preview responsibly",
   // The launcher only runs on hosts it recognises. If the production domain
   // ever drops out of this list the virtual preview silently stops appearing.
   assert.match(launcher, /713botoxme\.com/, "the production domain must be an approved host");
-  assert.match(home, /href="virtual-preview\.html">Try the Virtual Preview<\/a>/);
+  assert.match(home, /href="virtual-preview">Try the Virtual Preview<\/a>/);
   assert.match(home, /illustrative simulations only—not predictions or guarantees/);
   assert.match(preview, /AI-generated visualization/);
   assert.match(preview, /not a prediction or guarantee/);
@@ -496,5 +496,5 @@ test("configures and promotes the supplied Ageless virtual preview responsibly",
   assert.match(preview, /target="_blank" rel="noopener noreferrer"/);
   assert.match(preview, /ageless-launcher/, "the preview page should reference the launcher");
   assert.match(preview, /Book a Consultation/);
-  assert.match(sitemap, /virtual-preview\.html/);
+  assert.match(sitemap, /virtual-preview/);
 });

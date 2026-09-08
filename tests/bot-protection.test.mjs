@@ -50,6 +50,6 @@ test("enforces signed, expiring, rate-limited same-origin verification", async (
 test("keeps the Contact page free of an unprotected local form", async () => {
   const html = await read("public/contact.html");
   assert.doesNotMatch(html, /<form\b/i);
-  assert.match(html, /href="book-consultation\.html"/);
+  assert.match(html, /href="book-consultation"/);
   assert.match(html, /server-verified human verification/);
 });
