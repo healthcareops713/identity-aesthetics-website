@@ -10,6 +10,29 @@
  * Keys are lower-case, leading slash, trailing slash. Lookup normalises both
  * slash variants, so "/contact" and "/contact/" both match.
  */
+/**
+ * URLs that should cease to exist rather than move.
+ *
+ * A 301 tells search engines the page relocated and passes its history to the
+ * target. For junk that was never ours, that is the wrong signal - it keeps the
+ * URL alive in the index and associates it with the homepage. A 410 Gone asks
+ * for removal outright, which is what we want here.
+ */
+export const GONE_URLS = new Set<string>([
+  // Left over from whatever template the old WordPress site was built from.
+  // Nothing to do with this practice.
+  "/thank-you-for-contacting-taps-pest-control/",
+]);
+
+const GONE_BODY = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Page not available | Identity Aesthetics</title></head>
+<body style="font-family:system-ui,sans-serif;max-width:36rem;margin:12vh auto;padding:0 1.5rem;line-height:1.6">
+<h1 style="font-weight:500">This page no longer exists</h1>
+<p>It was removed and will not be coming back. <a href="/">Go to the Identity Aesthetics homepage</a>, or call
+<a href="tel:713-268-6963">713-BOTOX-ME</a>.</p></body></html>`;
+
 export const LEGACY_REDIRECTS: Record<string, string> = {
   // --- core pages ---
   "/contact/": "/contact.html",
@@ -75,7 +98,6 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/med-spa-services-old2/expert-aesthetic-botched-work-repair-5/": "/treatment-botched-filler-correction.html",
   "/identity-aesthetics-aesthetic-treatments-cloned-91179/": "/treatments.html",
   "/lp/identity-aesthetics-aesthetic-treatment/": "/treatments.html",
-  "/thank-you-for-contacting-taps-pest-control/": "/",
 };
 
 /**
@@ -85,6 +107,18 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
 export function legacyRedirect(url: URL): Response | null {
   const raw = url.pathname.toLowerCase();
   const withSlash = raw.endsWith("/") ? raw : `${raw}/`;
+
+  if (GONE_URLS.has(withSlash) || GONE_URLS.has(raw)) {
+    return new Response(GONE_BODY, {
+      status: 410,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex",
+        "cache-control": "no-store",
+      },
+    });
+  }
+
   const target = LEGACY_REDIRECTS[withSlash] ?? LEGACY_REDIRECTS[raw];
   if (!target) return null;
 

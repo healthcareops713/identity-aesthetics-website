@@ -71,3 +71,21 @@ test("current pages and API routes are not redirected", async () => {
   const api = await worker.fetch(new Request(`${ORIGIN}/api/consultation`, { method: "GET" }), stubEnv, stubCtx);
   assert.equal(api.status, 405, "the consultation endpoint should still answer, not redirect");
 });
+
+test("junk URLs return 410 Gone, not a redirect", async () => {
+  const worker = await loadWorker();
+  const src = await readFile(new URL("../worker/redirects.ts", import.meta.url), "utf8");
+
+  for (const path of ["/thank-you-for-contacting-taps-pest-control/",
+                      "/thank-you-for-contacting-taps-pest-control"]) {
+    const res = await get(worker, path);
+    assert.equal(res.status, 410, `${path} should be 410 Gone`);
+    assert.equal(res.headers.get("x-robots-tag"), "noindex");
+    assert.equal(res.headers.get("location"), null, "410 must not redirect");
+  }
+
+  // and it must not have been left in the redirect map as well
+  const redirects = [...src.matchAll(/^ {2}"([^"]+)": "([^"]+)",/gm)].map(([, from]) => from);
+  assert.ok(!redirects.some((r) => r.includes("pest-control")),
+    "the pest control URL must not appear in the redirect map");
+});
