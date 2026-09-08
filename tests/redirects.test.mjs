@@ -24,7 +24,12 @@ test("every legacy URL in the old sitemap returns a 301 to an existing page", as
   const worker = await loadWorker();
   const src = await readFile(new URL("../worker/redirects.ts", import.meta.url), "utf8");
   const entries = [...src.matchAll(/^ {2}"([^"]+)": "([^"]+)",/gm)].map(([, from, to]) => ({ from, to }));
-  assert.ok(entries.length >= 50, `expected the full legacy map, found ${entries.length}`);
+  const gone = [...src.matchAll(/^ {2}"(\/[^"]+)",/gm)].map(([, u]) => u);
+
+  // Every URL in the old site's sitemap must be accounted for: either it moves
+  // somewhere real, or it is explicitly gone. 51 was the count at migration.
+  assert.equal(entries.length + gone.length, 51,
+    `expected all 51 legacy URLs to be handled, found ${entries.length} redirects + ${gone.length} gone`);
 
   for (const { from, to } of entries) {
     const res = await get(worker, from);
