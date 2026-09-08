@@ -10,14 +10,31 @@ test("protects the site-controlled consultation form with layered verification",
   assert.match(html, /data-bot-protected="true"/);
   assert.match(html, /class="bot-trap"/);
   assert.match(html, /id="human-answer"/);
-  assert.match(html, /Verify &amp; Prepare My Request/);
+  assert.match(html, /id="consultation-submit"/);
+  assert.match(html, />Send My Consultation Request</);
+  assert.match(html, /id="refresh-challenge"/, "the visitor must be able to request a new question");
 });
 
-test("requires server verification before preparing a request", async () => {
+test("verification is enforced on the server before anything is stored", async () => {
   const script = await read("public/conversion-flow.js");
+  const worker = await read("worker/index.ts");
+  const consultation = await read("worker/consultation.ts");
+
+  // The client fetches a signed challenge and sends the answer with the
+  // submission. Verification happens server-side at submit time rather than in
+  // a separate client call, so it cannot be skipped by not making that call.
   assert.match(script, /\/api\/human-verification\/challenge/);
-  assert.match(script, /\/api\/human-verification\/verify/);
-  assert.match(script, /if\(!\(await verifyHuman\(\)\)\)return/);
+  assert.match(worker, /verifyHumanPayload/, "the worker must verify the challenge answer");
+
+  const submit = worker.slice(worker.indexOf("async function submitConsultation"));
+  const verifyAt = submit.indexOf("verifyHumanPayload");
+  const insertAt = submit.indexOf("INSERT INTO consultation_submissions");
+  assert.ok(verifyAt > -1 && insertAt > -1, "expected both verification and the insert in submitConsultation");
+  assert.ok(verifyAt < insertAt, "verification must run before the submission is written to the database");
+
+  // The answer is bound to a signed, expiring token rather than trusted as sent.
+  assert.match(consultation, /crypto\.subtle\.verify\("HMAC"/);
+  assert.match(consultation, /Number\(data\.answer\) !== first \+ second/);
 });
 
 test("enforces signed, expiring, rate-limited same-origin verification", async () => {
