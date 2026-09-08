@@ -76,16 +76,20 @@ test("junk URLs return 410 Gone, not a redirect", async () => {
   const worker = await loadWorker();
   const src = await readFile(new URL("../worker/redirects.ts", import.meta.url), "utf8");
 
-  for (const path of ["/thank-you-for-contacting-taps-pest-control/",
-                      "/thank-you-for-contacting-taps-pest-control"]) {
-    const res = await get(worker, path);
-    assert.equal(res.status, 410, `${path} should be 410 Gone`);
-    assert.equal(res.headers.get("x-robots-tag"), "noindex");
-    assert.equal(res.headers.get("location"), null, "410 must not redirect");
+  const gone = [...src.matchAll(/^ {2}"(\/[^"]+)",/gm)].map(([, u]) => u);
+  assert.ok(gone.length >= 5, `expected the gone list, found ${gone.length}`);
+
+  for (const path of gone) {
+    for (const variant of [path, path.replace(/\/$/, "")]) {
+      const res = await get(worker, variant);
+      assert.equal(res.status, 410, `${variant} should be 410 Gone`);
+      assert.equal(res.headers.get("x-robots-tag"), "noindex");
+      assert.equal(res.headers.get("location"), null, "410 must not redirect");
+    }
   }
 
-  // and it must not have been left in the redirect map as well
+  // nothing may be in both lists - a URL cannot be gone and moved at once
   const redirects = [...src.matchAll(/^ {2}"([^"]+)": "([^"]+)",/gm)].map(([, from]) => from);
-  assert.ok(!redirects.some((r) => r.includes("pest-control")),
-    "the pest control URL must not appear in the redirect map");
+  const overlap = redirects.filter((r) => gone.includes(r));
+  assert.deepEqual(overlap, [], "a URL must not appear in both the gone list and the redirect map");
 });

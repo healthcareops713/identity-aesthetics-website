@@ -22,6 +22,14 @@ export const GONE_URLS = new Set<string>([
   // Left over from whatever template the old WordPress site was built from.
   // Nothing to do with this practice.
   "/thank-you-for-contacting-taps-pest-control/",
+
+  // Content-free scaffolding that was indexed by accident. These carry no
+  // history worth preserving, so removal beats redirecting them to the
+  // homepage and leaving the URLs alive in the index.
+  "/test-page/",
+  "/gh/",
+  "/home-new/",
+  "/landing-page/",
 ]);
 
 const GONE_BODY = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
@@ -87,12 +95,8 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/blog/monthly-facial/": "/medspa.html",
   "/blog/aesthetic-injectors/": "/team.html",
 
-  // --- drafts, tests and duplicates that were indexed ---
+  // --- superseded pages, still worth redirecting: they had real content ---
   "/thank-you/": "/",
-  "/home-new/": "/",
-  "/landing-page/": "/",
-  "/test-page/": "/",
-  "/gh/": "/",
   "/med-spa-services-old/": "/treatments.html",
   "/med-spa-services-old/body-sculpting-old/": "/treatment-body-contouring.html",
   "/med-spa-services-old2/expert-aesthetic-botched-work-repair-5/": "/treatment-botched-filler-correction.html",
