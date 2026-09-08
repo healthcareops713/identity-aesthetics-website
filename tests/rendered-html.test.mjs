@@ -5,7 +5,7 @@ import test from "node:test";
 // Pages that exist for internal use and are deliberately excluded from the
 // patient-facing surface: noindex, absent from the sitemap, and not expected
 // to carry the site chrome.
-const INTERNAL_PAGES = new Set(["animated-logo-preview"]);
+const INTERNAL_PAGES = new Set(["animated-logo-preview.html"]);
 const patientPages = (names) =>
   names.filter((name) => name.endsWith(".html") && !INTERNAL_PAGES.has(name));
 
@@ -80,24 +80,24 @@ test("injects the approved Ageless embed launcher into every HTML response", asy
 
 test("promotes telehealth consistently across every public page", async () => {
   const pages = [
-    "index",
-    "injectables",
-    "medspa",
-    "weight-loss",
-    "peptides",
-    "peptide-education",
-    "locations",
-    "about",
-    "team",
-    "contact",
-    "telehealth",
-    "payment-plans",
-    "glo2facial-treatments",
-    "virtual-preview",
-    "faq",
-    "peptide-approved",
-    "peptide-research",
-    "peptide-safety",
+    "index.html",
+    "injectables.html",
+    "medspa.html",
+    "weight-loss.html",
+    "peptides.html",
+    "peptide-education.html",
+    "locations.html",
+    "about.html",
+    "team.html",
+    "contact.html",
+    "telehealth.html",
+    "payment-plans.html",
+    "glo2facial-treatments.html",
+    "virtual-preview.html",
+    "faq.html",
+    "peptide-approved.html",
+    "peptide-research.html",
+    "peptide-safety.html",
   ];
 
   for (const page of pages) {
@@ -308,13 +308,13 @@ test("uses the same navigation on every patient page", async () => {
     return [...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
   };
 
-  const home = navOf(await read("index"));
+  const home = navOf(await read("index.html"));
   assert.ok(home.length > 0, "the homepage must have a desktop nav to compare against");
 
   // Journal articles carry one extra link back to the journal index. That is
   // the only sanctioned difference; anything else is drift and the menu should
   // not change under a visitor as they move around the site.
-  const ALLOWED_EXTRA = new Set(["journal"]);
+  const ALLOWED_EXTRA = new Set(["journal.html"]);
 
   const problems = [];
   for (const page of patientPages(pages)) {
@@ -358,8 +358,9 @@ test("publishes the Meet the Team page with provider-specific booking options", 
   const { readdir: readDir } = await import("node:fs/promises");
   const bioPages = (await readDir(new URL("../public/", import.meta.url)))
     .filter((name) => /^team-[a-z-]+\.html$/.test(name));
-  const linked = new Set(html.match(/href="team-[a-z-]+\.html"/g)?.map((h) => h.slice(6, -1)) ?? []);
-  const orphaned = bioPages.filter((page) => !linked.has(page));
+  // links are extension-less now; the files on disk still end in .html
+  const linked = new Set(html.match(/href="team-[a-z-]+"/g)?.map((h) => h.slice(6, -1)) ?? []);
+  const orphaned = bioPages.filter((page) => !linked.has(page.replace(/\.html$/, "")));
   assert.deepEqual(orphaned, [], "these provider bio pages exist but are not linked from any team card");
   assert.ok(linked.size >= 5, `expected the team page to link several bios, found ${linked.size}`);
   const desktopNav = html.match(/<nav class="links">([\s\S]*?)<\/nav>/)?.[1] ?? "";
@@ -412,24 +413,24 @@ test("uses the current Fulshear address across location surfaces", async () => {
 test("uses the enhanced Identity wall image softly in the closing band on every page", async () => {
   const peptideCss = await readFile(new URL("../public/peptide-education.css", import.meta.url), "utf8");
   const pages = [
-    "index",
-    "injectables",
-    "medspa",
-    "weight-loss",
-    "peptides",
-    "peptide-education",
-    "locations",
-    "about",
-    "contact",
-    "telehealth",
-    "payment-plans",
-    "glo2facial-treatments",
-    "virtual-preview",
+    "index.html",
+    "injectables.html",
+    "medspa.html",
+    "weight-loss.html",
+    "peptides.html",
+    "peptide-education.html",
+    "locations.html",
+    "about.html",
+    "contact.html",
+    "telehealth.html",
+    "payment-plans.html",
+    "glo2facial-treatments.html",
+    "virtual-preview.html",
   ];
 
   for (const page of pages) {
     const html = await readFile(new URL(`../public/${page}`, import.meta.url), "utf8");
-    const usesSharedStyles = ["peptides", "peptide-education", "payment-plans", "glo2facial-treatments", "virtual-preview"].includes(page);
+    const usesSharedStyles = ["peptides.html", "peptide-education.html", "payment-plans.html", "glo2facial-treatments.html", "virtual-preview.html"].includes(page);
     const styles = usesSharedStyles ? `${html}\n${peptideCss}` : html;
     assert.match(styles, /url\('images\/identity-signature-wall\.webp'\)/, `${page} should use the signature wall image`);
     assert.match(styles, /linear-gradient\(rgba\(20,17,13,\.84\),rgba\(20,17,13,\.84\)\)/, `${page} should preserve text contrast`);

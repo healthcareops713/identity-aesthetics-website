@@ -126,6 +126,12 @@ export function legacyRedirect(url: URL): Response | null {
   const target = LEGACY_REDIRECTS[withSlash] ?? LEGACY_REDIRECTS[raw];
   if (!target) return null;
 
+  // Now that the site serves extension-less URLs, several legacy paths differ
+  // from their target only by a trailing slash (/contact/ -> /contact). The
+  // slash-insensitive lookup above would then match the target itself and
+  // redirect it to itself, forever. Never redirect a path to where it already is.
+  if (target === raw || target === withSlash) return null;
+
   const destination = new URL(target, url.origin);
   destination.search = url.search;
   return Response.redirect(destination.toString(), 301);
