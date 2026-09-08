@@ -43,12 +43,12 @@ test("redirects match with or without a trailing slash, and preserve query strin
 
   const noSlash = await get(worker, "/meet-the-team");
   assert.equal(noSlash.status, 301);
-  assert.equal(new URL(noSlash.headers.get("location")).pathname, "/team.html");
+  assert.equal(new URL(noSlash.headers.get("location")).pathname, "/team");
 
   const tagged = await get(worker, "/locations/botox-in-katy-tx/?utm_source=google&utm_medium=cpc");
   assert.equal(tagged.status, 301);
   const dest = new URL(tagged.headers.get("location"));
-  assert.equal(dest.pathname, "/botox-katy-tx.html");
+  assert.equal(dest.pathname, "/botox-katy-tx");
   assert.equal(dest.searchParams.get("utm_source"), "google");
   assert.equal(dest.searchParams.get("utm_medium"), "cpc");
 });
@@ -56,10 +56,10 @@ test("redirects match with or without a trailing slash, and preserve query strin
 test("city-qualified legacy URLs land on the matching city page", async () => {
   const worker = await loadWorker();
   const cases = [
-    ["/med-spa-services/botox-conroe-tx/", "/botox-conroe-tx.html"],
-    ["/locations/botox-in-houston-tx/", "/botox-houston-tx.html"],
-    ["/locations/botox-in-fulshear-tx/", "/botox-fulshear-tx.html"],
-    ["/locations/botox-in-katy-tx/", "/botox-katy-tx.html"],
+    ["/med-spa-services/botox-conroe-tx/", "/botox-conroe-tx"],
+    ["/locations/botox-in-houston-tx/", "/botox-houston-tx"],
+    ["/locations/botox-in-fulshear-tx/", "/botox-fulshear-tx"],
+    ["/locations/botox-in-katy-tx/", "/botox-katy-tx"],
   ];
   for (const [from, to] of cases) {
     const res = await get(worker, from);
@@ -69,7 +69,7 @@ test("city-qualified legacy URLs land on the matching city page", async () => {
 
 test("current pages and API routes are not redirected", async () => {
   const worker = await loadWorker();
-  for (const path of ["/", "/index.html", "/treatments.html", "/botox-conroe-tx.html", "/locations.html"]) {
+  for (const path of ["/", "/", "/treatments", "/botox-conroe-tx", "/locations"]) {
     const res = await get(worker, path);
     assert.notEqual(res.status, 301, `${path} must not redirect`);
   }

@@ -19,40 +19,40 @@ const clinicalPatterns = [
 
 const linkData = {
   injectables: [
-    ['Injectables hub','Compare injectables','injectables.html'],
-    ['Facial planning','Complete facial balancing','treatment-complete-facial-balancing.html'],
-    ['Correction options','Filler correction & repair','treatment-botched-filler-correction.html'],
-    ['Clinical team','Meet your provider','team.html']
+    ['Injectables hub','Compare injectables','injectables'],
+    ['Facial planning','Complete facial balancing','treatment-complete-facial-balancing'],
+    ['Correction options','Filler correction & repair','treatment-botched-filler-correction'],
+    ['Clinical team','Meet your provider','team']
   ],
   laser: [
-    ['Laser hub','Laser rejuvenation','treatment-laser-rejuvenation.html'],
-    ['Thulium treatment','Explore LaseMD','treatment-lasemd.html'],
-    ['Light & resurfacing','Explore Sciton Profile & BBL','treatment-sciton-profile-bbl.html'],
-    ['Plan your visit','Book a consultation','book-consultation.html']
+    ['Laser hub','Laser rejuvenation','treatment-laser-rejuvenation'],
+    ['Thulium treatment','Explore LaseMD','treatment-lasemd'],
+    ['Light & resurfacing','Explore Sciton Profile & BBL','treatment-sciton-profile-bbl'],
+    ['Plan your visit','Book a consultation','book-consultation']
   ],
   skin: [
-    ['Med spa hub','Facials, skin, lashes & brows','medspa.html'],
-    ['Skin renewal','Microneedling','microneedling.html'],
-    ['Resurfacing ritual','Dermaplaning','dermaplaning.html'],
-    ['Oxygenation facial','Glo2Facial','glo2facial-treatments.html']
+    ['Med spa hub','Facials, skin, lashes & brows','medspa'],
+    ['Skin renewal','Microneedling','microneedling'],
+    ['Resurfacing ritual','Dermaplaning','dermaplaning'],
+    ['Oxygenation facial','Glo2Facial','glo2facial-treatments']
   ],
   wellness: [
-    ['Wellness hub','Weight loss & wellness','weight-loss.html'],
-    ['Care from home','Telehealth in TX, NC & SC','telehealth.html'],
-    ['Hormone care','Men’s & women’s optimization','treatment-guides.html#wellness'],
-    ['Next step','Book a consultation','book-consultation.html']
+    ['Wellness hub','Weight loss & wellness','weight-loss'],
+    ['Care from home','Telehealth in TX, NC & SC','telehealth'],
+    ['Hormone care','Men’s & women’s optimization','treatment-guides#wellness'],
+    ['Next step','Book a consultation','book-consultation']
   ],
   peptide: [
-    ['Education center','Peptide foundations','peptide-education.html'],
-    ['Regulatory clarity','FDA-approved peptides','peptide-approved.html'],
-    ['Safety first','Peptide safety','peptide-safety.html'],
-    ['Clinical pathway','Physician-supervised therapy','treatment-physician-supervised-peptide-therapy.html']
+    ['Education center','Peptide foundations','peptide-education'],
+    ['Regulatory clarity','FDA-approved peptides','peptide-approved'],
+    ['Safety first','Peptide safety','peptide-safety'],
+    ['Clinical pathway','Physician-supervised therapy','treatment-physician-supervised-peptide-therapy']
   ],
   general: [
-    ['Browse by treatment','Treatment library','treatments.html'],
-    ['Browse by concern','Find my treatment','find-treatment.html'],
-    ['Meet the team','Providers & specialists','team.html'],
-    ['Plan your visit','Book a consultation','book-consultation.html']
+    ['Browse by treatment','Treatment library','treatments'],
+    ['Browse by concern','Find my treatment','find-treatment'],
+    ['Meet the team','Providers & specialists','team'],
+    ['Plan your visit','Book a consultation','book-consultation']
   ]
 };
 
@@ -77,11 +77,11 @@ function metaDescription(html) {
 
 function pageType(file, clinical) {
   if (clinical) return 'MedicalWebPage';
-  if (file === 'about.html') return 'AboutPage';
-  if (file === 'contact.html' || file === 'book-consultation.html') return 'ContactPage';
-  if (file === 'team.html') return 'CollectionPage';
+  if (file === 'about') return 'AboutPage';
+  if (file === 'contact' || file === 'book-consultation') return 'ContactPage';
+  if (file === 'team') return 'CollectionPage';
   if (file.startsWith('team-')) return 'ProfilePage';
-  if (file === 'faq.html') return 'FAQPage';
+  if (file === 'faq') return 'FAQPage';
   return 'WebPage';
 }
 
@@ -93,7 +93,7 @@ function existingReviewDate(html) {
 }
 
 function centralGraph(file, html, clinical) {
-  const url = file === 'index.html' ? `${base}/` : `${base}/${file}`;
+  const url = file === '/' ? `${base}/` : `${base}/${file}`;
   const title = textContent(html, 'title') || textContent(html, 'h1') || 'Identity Aesthetics';
   const description = metaDescription(html);
   const graph = [
@@ -127,7 +127,7 @@ function centralGraph(file, html, clinical) {
     graph[3].lastReviewed = existingReviewDate(html);
     graph.push({'@type':'Organization','@id':editorialId,name:'Identity Aesthetics Clinical Editorial Team',url:`${base}/editorial-policy.html`,parentOrganization:{'@id':orgId}});
   }
-  if (file === 'locations.html') {
+  if (file === 'locations') {
     const locations = [
       ['conroe','Identity Aesthetics — Conroe','3508 W. Davis St','Conroe','77304'],
       ['houston','Identity Aesthetics — Houston','6806 Long Point Rd, Suite C','Houston','77055'],
@@ -139,7 +139,7 @@ function centralGraph(file, html, clinical) {
       address:{'@type':'PostalAddress',streetAddress:street,addressLocality:city,addressRegion:'TX',postalCode:zip,addressCountry:'US'}
     });
   }
-  if (file === 'team.html') {
+  if (file === 'team') {
     const people = [
       ['Ike Nwanonyiri, MD','MD','Chief Medical Officer'],['Sarah Walker, APRN, FNP-C','APRN, FNP-C','Advanced Provider and Nutritionist'],
       ['Astrid Ariano','','Licensed Esthetician'],
@@ -159,7 +159,7 @@ function pathways(file) {
 function reviewPanel(html) {
   const reviewDate = existingReviewDate(html);
   const pretty = new Date(`${reviewDate}T12:00:00Z`).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});
-  return `<section class="authority-review" aria-label="Editorial and medical review information"><div class="wrap"><div class="authority-review-card"><div class="authority-review-item"><span class="authority-review-label">Prepared by</span><a href="editorial-policy.html">Identity Aesthetics Clinical Editorial Team</a><p>Patient education developed from primary regulatory, labeling and professional sources.</p></div><div class="authority-review-item"><span class="authority-review-label">Medically reviewed by</span><a href="team-dallas-alvey.html">Dallas Alvey, MD, DDS</a><p>Chief Medical Officer · Aesthetic medicine, hormone optimization and peptide therapy.</p></div><div class="authority-review-item"><span class="authority-review-label">Evidence review</span><strong>${pretty}</strong><p><a href="editorial-policy.html">Read our editorial standards and update policy</a></p></div></div></div></section>`;
+  return `<section class="authority-review" aria-label="Editorial and medical review information"><div class="wrap"><div class="authority-review-card"><div class="authority-review-item"><span class="authority-review-label">Prepared by</span><a href="editorial-policy">Identity Aesthetics Clinical Editorial Team</a><p>Patient education developed from primary regulatory, labeling and professional sources.</p></div><div class="authority-review-item"><span class="authority-review-label">Medically reviewed by</span><a href="team-dallas-alvey">Dallas Alvey, MD, DDS</a><p>Chief Medical Officer · Aesthetic medicine, hormone optimization and peptide therapy.</p></div><div class="authority-review-item"><span class="authority-review-label">Evidence review</span><strong>${pretty}</strong><p><a href="editorial-policy">Read our editorial standards and update policy</a></p></div></div></div></section>`;
 }
 
 for (const file of fs.readdirSync(publicDir).filter(f=>f.endsWith('.html'))) {
@@ -170,10 +170,10 @@ for (const file of fs.readdirSync(publicDir).filter(f=>f.endsWith('.html'))) {
   html = html.replace(/\n?<script id="identity-authority-schema"[\s\S]*?<\/script>/g,'');
   html = html.replace(/\n?<section class="authority-pathways"[\s\S]*?<\/section>/g,'');
   html = html.replace(/\n?<section class="authority-review"[\s\S]*?<\/section>/g,'');
-  if (!html.includes('href="editorial-policy.html">Medical Editorial Standards</a>')) {
-    html = html.replace('<a href="accessibility.html">Accessibility</a></div></div>', '<a href="accessibility.html">Accessibility</a><a href="editorial-policy.html">Medical Editorial Standards</a></div></div>');
-    if (!html.includes('href="editorial-policy.html">Medical Editorial Standards</a>')) {
-      html = html.replace('<a href="accessibility.html">Accessibility</a></span>', '<a href="accessibility.html">Accessibility</a> · <a href="editorial-policy.html">Medical Editorial Standards</a></span>');
+  if (!html.includes('href="editorial-policy">Medical Editorial Standards</a>')) {
+    html = html.replace('<a href="accessibility">Accessibility</a></div></div>', '<a href="accessibility">Accessibility</a><a href="editorial-policy">Medical Editorial Standards</a></div></div>');
+    if (!html.includes('href="editorial-policy">Medical Editorial Standards</a>')) {
+      html = html.replace('<a href="accessibility">Accessibility</a></span>', '<a href="accessibility">Accessibility</a> · <a href="editorial-policy">Medical Editorial Standards</a></span>');
     }
   }
   const schema = centralGraph(file,html,clinical);
