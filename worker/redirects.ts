@@ -52,7 +52,7 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   // --- services offered but without a dedicated page yet ---
   //     massage: Fulshear and Katy only; training is no longer offered
   "/med-spa-services/massage/": "/botox-fulshear-tx.html",
-  "/med-spa-services/hair-restoration/": "/treatments.html",
+  "/med-spa-services/hair-restoration/": "/medspa.html",
   "/training/": "/treatments.html",
 
   // --- blog posts -> nearest topic ---
