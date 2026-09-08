@@ -206,3 +206,37 @@ nav.links.ia-mega-nav{align-self:stretch;align-items:stretch;justify-content:cen
 @media(max-width:560px){.ia-mobile-mega-nav{padding-left:18px!important;padding-right:18px!important}.ia-mobile-menu-links{grid-template-columns:1fr}.ia-mobile-menu-links a{padding-top:8px!important;padding-bottom:8px!important}}
 @media(prefers-reduced-motion:reduce){.ia-mega-panel,.ia-mega-trigger,.ia-mega-trigger::after,.ia-mega-trigger>i,.ia-mega-groups section>a,.ia-mega-groups section>a i,.ia-mobile-menu-section>button i{transition:none}}
 @media print{.ia-mega-panel{display:none!important}}
+
+/* --- mobile overflow containment (added pre-launch) ---
+   Grid and flex children default to min-width:auto, so a wide inline row
+   inside a card can force its track wider than the viewport. */
+@media(max-width:759px){
+  .grid{min-width:0}
+  .grid>*{min-width:0}
+  .loc-card{min-width:0}
+  .loc-card .links{flex-wrap:wrap;gap:10px 18px}
+  .cta{flex-wrap:wrap}
+  .quick,.answer-card,.card{min-width:0}
+  .split,.split>*,.rows,.row,.panel,.social{min-width:0}
+  .btn{max-width:100%;white-space:normal}
+  img{max-width:100%;height:auto}
+  .evidence-grid,.evidence-grid>*{min-width:0}
+  .article-layout,.article-layout>*,.article-toc{min-width:0}
+  .article-toc a,.article-toc strong{overflow-wrap:anywhere}
+  table{max-width:100%}
+  .article-toc{max-width:100%;overflow-wrap:anywhere}
+  .evidence-card{max-width:100%;overflow-wrap:anywhere}
+  /* implicit auto track grows to max-content and pushes past the viewport */
+  .article-shell{grid-template-columns:minmax(0,1fr)}
+  .article-shell,.article-shell>*{min-width:0}
+  /* an auto-width block grows to fit a wide table; pin it and let the
+     table scroll inside its own box instead of the whole page */
+  .article-shell>.wrap{width:100%;max-width:100%}
+  .status{white-space:normal;max-width:100%}
+  .rows a,.row a{overflow-wrap:anywhere}
+}
+
+/* .article-cover is authored as a container but is applied directly to an
+   <img> on some journal pages, so the container's 1180px cap lands on the
+   image itself. An image must never exceed its column at any width. */
+img.article-cover{max-width:100%;height:auto}
