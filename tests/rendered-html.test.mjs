@@ -314,7 +314,7 @@ test("uses the same navigation on every patient page", async () => {
   // Journal articles carry one extra link back to the journal index. That is
   // the only sanctioned difference; anything else is drift and the menu should
   // not change under a visitor as they move around the site.
-  const ALLOWED_EXTRA = new Set(["journal.html"]);
+  const ALLOWED_EXTRA = new Set(["journal"]);
 
   const problems = [];
   for (const page of patientPages(pages)) {
