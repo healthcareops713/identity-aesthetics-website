@@ -49,10 +49,10 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/med-spa-services/ipl-laser-treatment/": "/treatment-sciton-profile-bbl.html",
   "/med-spa-services/specialty-services/": "/treatments.html",
 
-  // --- services offered but without a dedicated page yet ---
-  //     massage: Fulshear and Katy only; training is no longer offered
-  "/med-spa-services/massage/": "/botox-fulshear-tx.html",
-  "/med-spa-services/hair-restoration/": "/medspa.html",
+  // --- services rebuilt from the old site's own content ---
+  //     training is no longer offered, so it goes to the treatment library
+  "/med-spa-services/massage/": "/treatment-massage.html",
+  "/med-spa-services/hair-restoration/": "/treatment-hair-restoration.html",
   "/training/": "/treatments.html",
 
   // --- blog posts -> nearest topic ---
