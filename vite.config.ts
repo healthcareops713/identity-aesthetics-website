@@ -10,7 +10,7 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
 // Cloudflare Workers Builds sets these as build environment variables; local
 // development falls back to the placeholder, which Miniflare is happy with.
 const D1_DATABASE_ID =
-  process.env.D1_DATABASE_ID || SITE_CREATOR_PLACEHOLDER_DATABASE_ID;
+    process.env.D1_DATABASE_ID || "4d1ddb34-99ba-4c10-997e-e7e1eebdb92b";
 const D1_DATABASE_NAME = process.env.D1_DATABASE_NAME || "site-creator-d1";
 
 const { d1, r2 } = hostingConfig;
