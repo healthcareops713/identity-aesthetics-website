@@ -99,7 +99,7 @@ function centralGraph(file, html, clinical) {
   const graph = [
     {
       '@type':['Organization','MedicalBusiness'], '@id':orgId,
-      name:'Identity Aesthetics', legalName:'Identity Aesthetics PLLC', alternateName:'713 Botox Me', url:`${base}/`,
+      name:'Identity Aesthetics', legalName:'Identity Aesthetics', alternateName:'713 Botox Me', url:`${base}/`,
       logo:{'@type':'ImageObject',url:`${base}/images/identity-aesthetics-logo-best-slim-gold.png`},
       telephone:'+1-713-268-6963', email:'info@713botoxme.com', foundingDate:'2011',
       medicalSpecialty:['Aesthetic Medicine','Endocrinology','Dermatology'],
