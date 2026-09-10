@@ -62,13 +62,6 @@ const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
   vars: runtimeVars,
-  // Static assets are normally served before the Worker runs, so the Worker
-  // never sees a request for robots.txt and cannot vary it by hostname. This
-  // routes that one path through the Worker first, which lets the *.workers.dev
-  // preview answer with its own disallow-everything robots.txt while the real
-  // domain keeps the production one. Everything else still goes straight to the
-  // asset layer, so nothing else changes.
-  assets: { run_worker_first: ["/robots.txt"] },
   d1_databases: d1
     ? [
         {

@@ -84,23 +84,25 @@ test("legacy redirects still work on both hostnames and keep their status", asyn
 
 // The unit tests above call the Worker directly, which hides the fact that
 // Cloudflare serves matching static assets *before* the Worker runs. robots.txt
-// is a static file, so without this routing rule the preview would keep serving
-// the production robots.txt no matter what the Worker says. Assert the built
-// deploy manifest, because that is what Cloudflare actually reads.
-test("robots.txt is routed through the Worker so the preview can override it", async () => {
+// is a static file, so the Worker never sees that request on the real hostname
+// and cannot vary it - which is why the preview still serves the production
+// robots.txt and only the x-robots-tag header applies to Worker-handled routes.
+//
+// run_worker_first would route robots.txt to the Worker, but this Worker is
+// deployed without an ASSETS binding (confirmed in the deploy log's binding
+// list), so it would have no way to serve the real file and production
+// robots.txt would break. Do not add it back without adding that binding and
+// proving the production hostname still returns the real robots.txt.
+test("the deploy manifest keeps assets simple and does not reroute robots.txt", async () => {
   const { readFile } = await import("node:fs/promises");
   const config = JSON.parse(
     await readFile(new URL("../dist/server/wrangler.json", import.meta.url), "utf8"),
   );
   assert.ok(config.assets, "the build must still declare an assets block");
+  assert.equal(config.assets.directory, "../client", "the asset directory must survive");
   assert.equal(
-    config.assets.directory,
-    "../client",
-    "adding the routing rule must not drop the asset directory",
-  );
-  assert.deepEqual(
     config.assets.run_worker_first,
-    ["/robots.txt"],
-    "only robots.txt should bypass the asset layer; routing everything through the Worker was not intended",
+    undefined,
+    "routing robots.txt to the Worker needs an ASSETS binding first, or production robots.txt breaks",
   );
 });
