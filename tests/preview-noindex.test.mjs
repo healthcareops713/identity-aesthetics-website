@@ -81,3 +81,26 @@ test("legacy redirects still work on both hostnames and keep their status", asyn
     assert.ok(response.headers.get("location"), `${origin} redirect must keep its Location header`);
   }
 });
+
+// The unit tests above call the Worker directly, which hides the fact that
+// Cloudflare serves matching static assets *before* the Worker runs. robots.txt
+// is a static file, so without this routing rule the preview would keep serving
+// the production robots.txt no matter what the Worker says. Assert the built
+// deploy manifest, because that is what Cloudflare actually reads.
+test("robots.txt is routed through the Worker so the preview can override it", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const config = JSON.parse(
+    await readFile(new URL("../dist/server/wrangler.json", import.meta.url), "utf8"),
+  );
+  assert.ok(config.assets, "the build must still declare an assets block");
+  assert.equal(
+    config.assets.directory,
+    "../client",
+    "adding the routing rule must not drop the asset directory",
+  );
+  assert.deepEqual(
+    config.assets.run_worker_first,
+    ["/robots.txt"],
+    "only robots.txt should bypass the asset layer; routing everything through the Worker was not intended",
+  );
+});
