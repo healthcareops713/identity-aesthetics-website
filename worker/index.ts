@@ -289,68 +289,6 @@ const worker = {
     const redirect = legacyRedirect(url);
     if (redirect) return redirect;
 
-    // TEMPORARY launch diagnostic. Reports why consultation mail is failing
-    // without sending any. Everything is wrapped: a malformed webhook URL must
-    // be reported, not thrown, because `new URL()` and `fetch()` reject the
-    // same inputs - so a URL that crashes this route is the same URL that makes
-    // real submissions fail. Never echoes a secret, only presence and length.
-    // The webhook URL is shown in part so a truncated or mangled paste is
-    // visible. Delete once mail delivery is confirmed.
-    if (url.pathname === "/api/_diag/webhook" && url.searchParams.get("k") === "rwJKuEGX_ZUOvKN1Xph4qnev") {
-      const report: Record<string, unknown> = {};
-      try {
-        const rawUrl = env.GOOGLE_MAIL_WEBHOOK_URL;
-        const webhookUrl = rawUrl?.trim();
-        const webhookSecret = env.GOOGLE_MAIL_WEBHOOK_SECRET;
-
-        report.botSecretPresent = Boolean(env.BOT_PROTECTION_SECRET);
-        report.webhookSecretPresent = Boolean(webhookSecret);
-        report.webhookSecretLength = webhookSecret ? webhookSecret.length : 0;
-        report.webhookUrlPresent = Boolean(webhookUrl);
-        report.webhookUrlRawLength = rawUrl ? rawUrl.length : 0;
-        report.webhookUrlTrimmedLength = webhookUrl ? webhookUrl.length : 0;
-        report.webhookUrlHead = webhookUrl ? webhookUrl.slice(0, 50) : null;
-        report.webhookUrlTail = webhookUrl ? webhookUrl.slice(-12) : null;
-        // Anything outside printable ASCII is invisible in a dashboard field
-        // but fatal to URL parsing, so name the offenders explicitly.
-        report.webhookUrlOddChars = webhookUrl
-          ? [...webhookUrl].map((c, i) => [i, c.charCodeAt(0)]).filter(([, code]) => (code as number) < 32 || (code as number) > 126)
-          : [];
-
-        if (webhookUrl) {
-          try {
-            report.webhookUrlHost = new URL(webhookUrl).host;
-            report.webhookUrlParses = true;
-          } catch (error) {
-            report.webhookUrlParses = false;
-            report.webhookUrlParseError = error instanceof Error ? error.message : "unknown";
-          }
-        }
-
-        if (webhookUrl && webhookSecret) {
-          const payload = JSON.stringify({
-            submissionId: "diagnostic-no-email",
-            submittedAt: new Date().toISOString(),
-          });
-          try {
-            const probe = await fetch(webhookUrl, {
-              method: "POST",
-              headers: { "content-type": "text/plain; charset=UTF-8", accept: "application/json" },
-              body: JSON.stringify({ payload, signature: await secureHash(payload, webhookSecret) }),
-              redirect: "follow",
-            });
-            report.probeStatus = probe.status;
-            report.probeBody = (await probe.text()).slice(0, 300);
-          } catch (error) {
-            report.probeError = error instanceof Error ? error.message : "unknown";
-          }
-        }
-      } catch (error) {
-        report.diagnosticError = error instanceof Error ? error.message : "unknown";
-      }
-      return jsonResponse(report, 200, { "cache-control": "no-store" });
-    }
-
     if (url.pathname === "/api/human-verification/challenge" && request.method === "GET") {
       const secret = env.BOT_PROTECTION_SECRET || (url.hostname === "terminal.local" ? "identity-local-preview-only" : "");
       if (!secret) return jsonResponse({ ok: false, message: "Human verification is temporarily unavailable. Please call or text us." }, 503);
