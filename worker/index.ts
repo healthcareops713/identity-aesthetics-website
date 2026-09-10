@@ -281,13 +281,46 @@ const AGELESS_LAUNCHER = `<script defer src="/ageless-launcher.js?v=125"></scrip
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
-const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+// Cloudflare keeps serving this Worker on its *.workers.dev hostname even after
+// a custom domain is attached, which would leave a second crawlable copy of the
+// entire site competing with the real one. Search engines are told to ignore
+// that copy. The rule is keyed on the request hostname, so 713botoxme.com is
+// never affected, and nothing about how the pages behave for visitors changes -
+// the preview stays fully usable, forms included.
+const PREVIEW_HOST_SUFFIX = ".workers.dev";
+
+const isPreviewHost = (hostname: string) => hostname.endsWith(PREVIEW_HOST_SUFFIX);
+
+// 204, 205 and 304 must not carry a body; rebuilding one with a body throws.
+const BODYLESS_STATUSES = new Set([204, 205, 304]);
+
+const withPreviewNoindex = (url: URL, response: Response) => {
+  if (!isPreviewHost(url.hostname)) return response;
+  const headers = new Headers(response.headers);
+  headers.set("x-robots-tag", "noindex, nofollow");
+  return new Response(BODYLESS_STATUSES.has(response.status) ? null : response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+};
+
+// The production robots.txt invites crawling and points at the live sitemap.
+// A preview host must do neither.
+const PREVIEW_ROBOTS = "User-agent: *\nDisallow: /\n";
+
+async function routeRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     // 301s from the previous WordPress site, before any other routing
     const redirect = legacyRedirect(url);
     if (redirect) return redirect;
+
+    if (isPreviewHost(url.hostname) && url.pathname === "/robots.txt") {
+      return new Response(PREVIEW_ROBOTS, {
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
 
     if (url.pathname === "/api/human-verification/challenge" && request.method === "GET") {
       const secret = env.BOT_PROTECTION_SECRET || (url.hostname === "terminal.local" ? "identity-local-preview-only" : "");
@@ -340,6 +373,11 @@ const worker = {
     }
 
     return response;
+}
+
+const worker = {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return withPreviewNoindex(new URL(request.url), await routeRequest(request, env, ctx));
   },
 };
 
