@@ -15,12 +15,32 @@ const D1_DATABASE_NAME = process.env.D1_DATABASE_NAME || "site-creator-d1";
 
 const { d1, r2 } = hostingConfig;
 
+// Cloudflare's dashboard stores these as *build* variables, which are visible
+// to `npm run build` but never appear in `env` inside the running Worker. The
+// build therefore copies them into the generated wrangler.json so they become
+// real runtime variables. Values are never committed - they come from the
+// build environment. A name that is absent or blank is omitted entirely rather
+// than deployed as an empty string, so a missing value can never quietly
+// overwrite a good one.
+const RUNTIME_VAR_NAMES = [
+  "BOT_PROTECTION_SECRET",
+  "GOOGLE_MAIL_WEBHOOK_URL",
+  "GOOGLE_MAIL_WEBHOOK_SECRET",
+] as const;
+
+const runtimeVars: Record<string, string> = Object.fromEntries(
+  RUNTIME_VAR_NAMES.map((name) => [name, (process.env[name] ?? "").trim()]).filter(
+    ([, value]) => value !== "",
+  ),
+);
+
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  vars: runtimeVars,
   d1_databases: d1
     ? [
         {
