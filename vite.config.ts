@@ -22,17 +22,38 @@ const { d1, r2 } = hostingConfig;
 // build environment. A name that is absent or blank is omitted entirely rather
 // than deployed as an empty string, so a missing value can never quietly
 // overwrite a good one.
-const RUNTIME_VAR_NAMES = [
-  "BOT_PROTECTION_SECRET",
-  "GOOGLE_MAIL_WEBHOOK_URL",
-  "GOOGLE_MAIL_WEBHOOK_SECRET",
-] as const;
+const RUNTIME_SECRET_NAMES = ["BOT_PROTECTION_SECRET", "GOOGLE_MAIL_WEBHOOK_SECRET"] as const;
 
-const runtimeVars: Record<string, string> = Object.fromEntries(
-  RUNTIME_VAR_NAMES.map((name) => [name, (process.env[name] ?? "").trim()]).filter(
-    ([, value]) => value !== "",
+// The Apps Script endpoint is not a credential - the HMAC signature is what
+// protects it - so the known-good URL lives here rather than only in a
+// dashboard field. The build variable had been saved as the five characters
+// "/exec", which fetch() rejects, and a write-only Secret field gave no way to
+// see that. An env value still wins when it is a usable absolute URL; anything
+// missing or unparseable falls back to this constant instead of shipping a
+// value that cannot work.
+const GOOGLE_MAIL_WEBHOOK_URL_FALLBACK =
+  "https://script.google.com/macros/s/AKfycbypvKlFSwBitSHtprJoXYNEFniZ9PypGFKMWP0E2acq_8CDKhSYDGSysY7c73VN6xUANQ/exec";
+
+const usableUrl = (value: string | undefined) => {
+  const candidate = (value ?? "").trim();
+  if (!candidate) return "";
+  try {
+    const parsed = new URL(candidate);
+    return parsed.protocol === "https:" ? candidate : "";
+  } catch {
+    return "";
+  }
+};
+
+const runtimeVars: Record<string, string> = {
+  ...Object.fromEntries(
+    RUNTIME_SECRET_NAMES.map((name) => [name, (process.env[name] ?? "").trim()]).filter(
+      ([, value]) => value !== "",
+    ),
   ),
-);
+  GOOGLE_MAIL_WEBHOOK_URL:
+    usableUrl(process.env.GOOGLE_MAIL_WEBHOOK_URL) || GOOGLE_MAIL_WEBHOOK_URL_FALLBACK,
+};
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
