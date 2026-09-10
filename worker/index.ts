@@ -289,6 +289,44 @@ const worker = {
     const redirect = legacyRedirect(url);
     if (redirect) return redirect;
 
+    // TEMPORARY launch diagnostic. Signs a deliberately incomplete payload and
+    // reports what the Google Apps Script says back. The script verifies the
+    // signature before it checks required fields, so "Incomplete request."
+    // proves the two secrets agree while "Unauthorized request." proves they do
+    // not - and neither path sends an email. Never echoes a secret value, only
+    // whether one is present and how long it is. Delete once mail is confirmed.
+    if (url.pathname === "/api/_diag/webhook" && url.searchParams.get("k") === "rwJKuEGX_ZUOvKN1Xph4qnev") {
+      const webhookUrl = env.GOOGLE_MAIL_WEBHOOK_URL?.trim();
+      const webhookSecret = env.GOOGLE_MAIL_WEBHOOK_SECRET;
+      const report: Record<string, unknown> = {
+        botSecretPresent: Boolean(env.BOT_PROTECTION_SECRET),
+        webhookUrlPresent: Boolean(webhookUrl),
+        webhookUrlHost: webhookUrl ? new URL(webhookUrl).host : null,
+        webhookUrlEndsWithExec: webhookUrl ? webhookUrl.endsWith("/exec") : null,
+        webhookSecretPresent: Boolean(webhookSecret),
+        webhookSecretLength: webhookSecret ? webhookSecret.length : 0,
+      };
+      if (webhookUrl && webhookSecret) {
+        const payload = JSON.stringify({
+          submissionId: "diagnostic-no-email",
+          submittedAt: new Date().toISOString(),
+        });
+        try {
+          const probe = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "content-type": "text/plain; charset=UTF-8", accept: "application/json" },
+            body: JSON.stringify({ payload, signature: await secureHash(payload, webhookSecret) }),
+            redirect: "follow",
+          });
+          report.probeStatus = probe.status;
+          report.probeBody = (await probe.text()).slice(0, 300);
+        } catch (error) {
+          report.probeError = error instanceof Error ? error.message : "unknown";
+        }
+      }
+      return jsonResponse(report, 200, { "cache-control": "no-store" });
+    }
+
     if (url.pathname === "/api/human-verification/challenge" && request.method === "GET") {
       const secret = env.BOT_PROTECTION_SECRET || (url.hostname === "terminal.local" ? "identity-local-preview-only" : "");
       if (!secret) return jsonResponse({ ok: false, message: "Human verification is temporarily unavailable. Please call or text us." }, 503);
