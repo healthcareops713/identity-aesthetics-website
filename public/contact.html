@@ -138,6 +138,7 @@ nav.links a:hover,nav.links a.on{color:var(--text);border-color:var(--gold)}
 /* price rows */
 .rows{border-top:1px solid var(--line2)}
 .row{display:flex;justify-content:space-between;gap:20px;align-items:baseline;padding:20px 4px;border-bottom:1px solid var(--line2)}
+@media(max-width:479px){.row{flex-wrap:wrap;gap:10px}.row>*{min-width:0}.p{max-width:100%}}
 .row .n{font-family:'Cormorant Garamond',serif;font-size:22px}
 .row .d{color:var(--dim);font-size:13.5px;margin-top:3px;max-width:560px;font-family:'Jost',sans-serif}
 .row .p{color:var(--gold-hi);font-size:14px;letter-spacing:.12em;white-space:nowrap}
