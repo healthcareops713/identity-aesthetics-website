@@ -110,6 +110,7 @@ nav.links a:hover,nav.links a.on{color:var(--text);border-color:var(--gold)}
 /* cards & grids */
 .grid{display:grid;gap:22px}
 .g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}
+@media(max-width:339px){.g4{grid-template-columns:1fr}}
 @media(min-width:760px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}}
 .card{background:var(--card);border:1px solid var(--line2);border-radius:var(--radius);padding:34px 30px;transition:.3s;position:relative;box-shadow:var(--shadow)}
 .card:hover{border-color:var(--line);transform:translateY(-3px);box-shadow:0 20px 46px rgba(74,56,25,.13)}
