@@ -413,6 +413,35 @@
     render("");
   }
 
+  // The three social profiles already sit in the footer, but the footer starts
+  // around 5,200px down a 5,700px page, so in practice nobody ever saw them.
+  // Surface the same profiles where they are actually reachable: the top bar on
+  // desktop, which is above the fold on every page and does not compete with
+  // the booking button, and the slide-out menu on mobile, because the top bar
+  // is already tight enough at 320-360px that adding to it reintroduces the
+  // horizontal overflow fixed earlier.
+  function enhanceSocialReach() {
+    var profiles = [
+      ["https://www.instagram.com/identityaesthetics/", "IG", "Instagram"],
+      ["https://www.facebook.com/identityAestheticCenters/", "FB", "Facebook"],
+      ["https://www.tiktok.com/@identityaestheticcenter", "TT", "TikTok"]
+    ];
+    function build(className) {
+      var nav = document.createElement("nav");
+      nav.className = className;
+      nav.setAttribute("aria-label", "Follow Identity Aesthetics");
+      nav.innerHTML = profiles.map(function (p) {
+        return '<a href="' + p[0] + '" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on ' + p[2] + '">' +
+               '<span aria-hidden="true">' + p[1] + '</span><b>' + p[2] + '</b></a>';
+      }).join("");
+      return nav;
+    }
+    var topbar = document.querySelector(".topbar .wrap");
+    if (topbar && !topbar.querySelector(".topbar-social")) topbar.appendChild(build("topbar-social"));
+    var mobileNav = document.getElementById("mnav");
+    if (mobileNav && !mobileNav.querySelector(".mnav-social")) mobileNav.appendChild(build("mnav-social"));
+  }
+
   function enhanceFooterTrust() {
     var footer = document.querySelector("footer");
     if (!footer || footer.dataset.trustEnhanced === "true") return;
@@ -709,5 +738,6 @@
 
   buildMegaNavigation();
   enhanceFooterTrust();
+  enhanceSocialReach();
   buildLuxurySearch();
 })();

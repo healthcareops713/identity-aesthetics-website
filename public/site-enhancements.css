@@ -250,3 +250,33 @@ img.article-cover{max-width:100%;height:auto}
 footer .social{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
 footer .social a{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(217,188,127,.25);border-radius:50%;color:#cfc6b7;font:500 11px/1 'Jost',sans-serif;letter-spacing:.06em;text-decoration:none;transition:color .2s ease,border-color .2s ease,transform .2s ease}
 footer .social a:hover,footer .social a:focus-visible{color:#e3cb96;border-color:#d9bc7f;transform:translateY(-1px);outline:0}
+
+
+/* Social reach. Same three profiles as the footer, surfaced where they can
+   actually be seen. Desktop: the top bar, above the fold on every page.
+   Labels are visually hidden there so the row stays compact next to the
+   phone number, but screen readers and crawlers still read them. Below
+   1024px the top bar row is dropped entirely - it wraps to two lines on
+   small phones and a third item reintroduces the overflow fixed earlier -
+   and the links appear in the slide-out menu instead, with full labels. */
+.topbar-social{display:flex;align-items:center;gap:9px;margin-left:14px;flex:none}
+.topbar-social a{position:relative;display:inline-flex;align-items:center;color:#d9bc7f;text-decoration:none;opacity:.82;transition:opacity .2s ease,transform .2s ease}
+.topbar-social a:hover,.topbar-social a:focus-visible{opacity:1;transform:translateY(-1px);outline:0}
+.topbar-social span{display:grid;place-items:center;width:20px;height:20px;border:1px solid currentColor;border-radius:50%;font:500 8px/1 'Jost',sans-serif;letter-spacing:.02em}
+.topbar-social b{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* Measured on the live site with Jost loaded: the top bar's inner width caps
+   at 1180px and its existing content uses ~931px. This row costs 92px, so
+   below about 1040px it would push the location line onto a second row.
+   1100px leaves ~154px of headroom. (Locally, without Google Fonts, the
+   fallback face is wider and will appear to wrap sooner - that is the
+   sandbox, not production.) */
+@media(max-width:1099px){.topbar-social{display:none}}
+
+.mnav-social{display:flex;flex-wrap:wrap;gap:10px;padding:14px 24px 16px;border-bottom:1px solid var(--line2)}
+.mnav-social a{display:inline-flex;align-items:center;gap:8px;padding:0;border:0;color:var(--muted);text-decoration:none;font:400 11px/1 'Jost',sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.mnav-social a:hover,.mnav-social a:focus-visible{color:var(--gold-hi);outline:0}
+.mnav-social span{display:grid;place-items:center;width:27px;height:27px;border:1px solid var(--line2);border-radius:50%;font:500 9px/1 'Jost',sans-serif}
+/* The hamburger stays available up to 1439px, so the menu copy stays too.
+   Between 1100 and 1439 both appear, which is harmless: the menu is closed
+   until opened. */
+@media(min-width:1440px){.mnav-social{display:none}}
