@@ -129,7 +129,13 @@
 .footer-social-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
 .footer-social-links a{display:inline-flex!important;align-items:center;gap:7px;padding:5px 9px 5px 5px!important;border:1px solid rgba(217,188,127,.22);border-radius:999px;color:#cfc6b7!important;text-decoration:none!important;transition:border-color .2s ease,color .2s ease,transform .2s ease}
 .footer-social-links a:hover,.footer-social-links a:focus-visible{border-color:#d9bc7f;color:#fff!important;transform:translateY(-1px);outline:0}
-.footer-social-links span{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:rgba(217,188,127,.1);color:#e3cb96;font:500 8.5px/1 'Jost',sans-serif;letter-spacing:.06em}
+/* Official brand marks on white circular chips. The marks ship unaltered, so
+   the chip is what carries them on this site's dark surfaces; a plain white
+   disc is the neutral background all three brands' guidelines ask for. */
+.social-chip{display:grid;place-items:center;border-radius:50%;background:#fff;flex:none;overflow:hidden}
+.social-chip img{display:block;width:auto;height:auto;max-width:100%;max-height:100%}
+.footer-social-links span.social-chip{width:28px;height:28px;padding:5px}
+.footer-social-links span.social-chip img{width:18px;height:18px}
 .footer-social-links b{font:400 9px/1 'Jost',sans-serif;letter-spacing:.1em;text-transform:uppercase}
 .legitscript-trust{margin-top:20px}
 .legitscript-trust>a{display:inline-flex!important;align-items:center;gap:12px;max-width:285px;padding:9px 13px 9px 9px!important;border:1px solid rgba(217,188,127,.2);border-radius:13px;background:rgba(255,255,255,.025);color:#cfc6b7!important;text-decoration:none!important;transition:border-color .2s ease,background .2s ease}
@@ -206,3 +212,131 @@ nav.links.ia-mega-nav{align-self:stretch;align-items:stretch;justify-content:cen
 @media(max-width:560px){.ia-mobile-mega-nav{padding-left:18px!important;padding-right:18px!important}.ia-mobile-menu-links{grid-template-columns:1fr}.ia-mobile-menu-links a{padding-top:8px!important;padding-bottom:8px!important}}
 @media(prefers-reduced-motion:reduce){.ia-mega-panel,.ia-mega-trigger,.ia-mega-trigger::after,.ia-mega-trigger>i,.ia-mega-groups section>a,.ia-mega-groups section>a i,.ia-mobile-menu-section>button i{transition:none}}
 @media print{.ia-mega-panel{display:none!important}}
+
+/* --- mobile overflow containment (added pre-launch) ---
+   Grid and flex children default to min-width:auto, so a wide inline row
+   inside a card can force its track wider than the viewport. */
+@media(max-width:759px){
+  .grid{min-width:0}
+  .grid>*{min-width:0}
+  .loc-card{min-width:0}
+  .loc-card .links{flex-wrap:wrap;gap:10px 18px}
+  .cta{flex-wrap:wrap}
+  .quick,.answer-card,.card{min-width:0}
+  .split,.split>*,.rows,.row,.panel,.social{min-width:0}
+  .btn{max-width:100%;white-space:normal}
+  img{max-width:100%;height:auto}
+  .evidence-grid,.evidence-grid>*{min-width:0}
+  .article-layout,.article-layout>*,.article-toc{min-width:0}
+  .article-toc a,.article-toc strong{overflow-wrap:anywhere}
+  table{max-width:100%}
+  .article-toc{max-width:100%;overflow-wrap:anywhere}
+  .evidence-card{max-width:100%;overflow-wrap:anywhere}
+  /* implicit auto track grows to max-content and pushes past the viewport */
+  .article-shell{grid-template-columns:minmax(0,1fr)}
+  .article-shell,.article-shell>*{min-width:0}
+  /* an auto-width block grows to fit a wide table; pin it and let the
+     table scroll inside its own box instead of the whole page */
+  .article-shell>.wrap{width:100%;max-width:100%}
+  .status{white-space:normal;max-width:100%}
+  .rows a,.row a{overflow-wrap:anywhere}
+}
+
+/* --- desktop overflow containment (added pre-launch) ---
+   The block above stops at 759px, but the multi-column grids only exist from
+   760px up, so above that width nothing was containing them. A `1fr` track is
+   really `minmax(auto,1fr)`: its floor is the item's min-content, so a card
+   whose longest line cannot wrap holds its track open and pushes the row past
+   the container. locations.html did exactly that — three cards wanting
+   370/381/386px inside a 976px grid, which scrolled the page sideways by
+   ~180px at every width below 1280. Releasing the floor lets the tracks share
+   the row evenly; the wrapping rules keep the content inside its own card. */
+.grid,.grid>*{min-width:0}
+.loc-card{min-width:0}
+.loc-card .links{flex-wrap:wrap}
+.loc-card .addr,.loc-card .note,.loc-card h3{overflow-wrap:break-word}
+
+/* The same reasoning for the three things that are intrinsically wider than
+   their column and were only being contained on phones: the GLP-1 pipeline
+   table, its nowrap status pills, and a nowrap button label sitting in a
+   narrow card. None of these rules changes a layout that already fits — they
+   only bite once the content would otherwise leave the page. */
+table{max-width:100%}
+
+/* telehealth.html caps every .wrap at 1180px to set its article measure, and
+   that cap lands on the header row too. The header there carries a second CTA,
+   so the row runs 74px past the right edge between 1440px — where the desktop
+   nav switches on — and about 1600px, clipping "Book Now" off the screen. Give
+   the header row the same 1400px measure the rest of the site already uses;
+   `min-width` is what reaches it, because the page sets `width`, not
+   `max-width`. Headers already at or above that measure are unaffected. */
+@media(min-width:1200px){header.nav>.wrap{min-width:min(1400px,calc(100% - 48px))}}
+th,td{overflow-wrap:break-word}
+.status{max-width:100%;white-space:normal}
+.btn{max-width:100%;white-space:normal}
+/* …except in the header, where a wrapped label turns a pill into a blob. The
+   header row is tightened instead, just below. */
+.nav .btn{white-space:nowrap}
+
+/* The desktop mega-nav switches on at 1120px and the header then has to carry
+   the logo, nine menu items, search and two CTAs on one line. It does not fit:
+   on the live site the gold "Book Now" button sits off the right edge of the
+   screen on 38 pages at 1440px and 35 at 1600px, and the page scrolls sideways
+   to reach it. 1440-1600px is ordinary laptop territory — a 14" MacBook is
+   1512 — so this is the common case, not an edge case. Nothing is dropped or
+   reworded; the row is simply tightened through the range where it is short of
+   space, mostly by pulling back the very wide letter-spacing, and everything
+   returns to its normal spacing once there is room for it again. */
+@media(min-width:1200px) and (max-width:1749px){
+  header.nav>.wrap{gap:14px}
+  .nav .wrap>div:last-child{gap:9px}
+  .ia-mega-trigger{padding-left:2px;padding-right:4px;letter-spacing:.02em;font-size:10.2px}
+  .nav .btn{padding-left:14px;padding-right:14px;letter-spacing:.1em}
+}
+
+/* .article-cover is authored as a container but is applied directly to an
+   <img> on some journal pages, so the container's 1180px cap lands on the
+   image itself. An image must never exceed its column at any width. */
+img.article-cover{max-width:100%;height:auto}
+
+
+/* Footer social links. The markup existed on only 15 of 94 pages and its
+   styling lived in per-page <style> blocks on 9, so most footers had no way to
+   render it even once the markup was there. Scoped to the footer so it cannot
+   disturb any other .social use, and matched to the circles already shipping
+   on the pages that had them. */
+footer .social{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+footer .social a{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(217,188,127,.25);border-radius:50%;color:#cfc6b7;font:500 11px/1 'Jost',sans-serif;letter-spacing:.06em;text-decoration:none;transition:color .2s ease,border-color .2s ease,transform .2s ease}
+footer .social a:hover,footer .social a:focus-visible{color:#e3cb96;border-color:#d9bc7f;transform:translateY(-1px);outline:0}
+
+
+/* Social reach. Same three profiles as the footer, surfaced where they can
+   actually be seen. Desktop: the top bar, above the fold on every page.
+   Labels are visually hidden there so the row stays compact next to the
+   phone number, but screen readers and crawlers still read them. Below
+   1024px the top bar row is dropped entirely - it wraps to two lines on
+   small phones and a third item reintroduces the overflow fixed earlier -
+   and the links appear in the slide-out menu instead, with full labels. */
+.topbar-social{display:flex;align-items:center;gap:9px;margin-left:14px;flex:none}
+.topbar-social a{position:relative;display:inline-flex;align-items:center;color:#d9bc7f;text-decoration:none;opacity:.82;transition:opacity .2s ease,transform .2s ease}
+.topbar-social a:hover,.topbar-social a:focus-visible{opacity:1;transform:translateY(-1px);outline:0}
+.topbar-social span.social-chip{width:22px;height:22px;padding:4px}
+.topbar-social span.social-chip img{width:14px;height:14px}
+.topbar-social b{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* Measured on the live site with Jost loaded: the top bar's inner width caps
+   at 1180px and its existing content uses ~931px. This row costs 92px, so
+   below about 1040px it would push the location line onto a second row.
+   1100px leaves ~154px of headroom. (Locally, without Google Fonts, the
+   fallback face is wider and will appear to wrap sooner - that is the
+   sandbox, not production.) */
+@media(max-width:1099px){.topbar-social{display:none}}
+
+.mnav-social{display:flex;flex-wrap:wrap;gap:10px;padding:14px 24px 16px;border-bottom:1px solid var(--line2)}
+.mnav-social a{display:inline-flex;align-items:center;gap:8px;padding:0;border:0;color:var(--muted);text-decoration:none;font:400 11px/1 'Jost',sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.mnav-social a:hover,.mnav-social a:focus-visible{color:var(--gold-hi);outline:0}
+.mnav-social span.social-chip{width:28px;height:28px;padding:5px}
+.mnav-social span.social-chip img{width:18px;height:18px}
+/* The hamburger stays available up to 1439px, so the menu copy stays too.
+   Between 1100 and 1439 both appear, which is harmless: the menu is closed
+   until opened. */
+@media(min-width:1440px){.mnav-social{display:none}}
