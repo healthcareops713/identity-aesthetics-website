@@ -420,20 +420,65 @@
   // the booking button, and the slide-out menu on mobile, because the top bar
   // is already tight enough at 320-360px that adding to it reintroduces the
   // horizontal overflow fixed earlier.
+  // Each profile is [profile URL, icon file stem, display name]. The icons are
+  // the official brand marks supplied by Instagram, Meta and TikTok, unaltered
+  // and sized down; every surface they appear on is dark, so each mark sits on
+  // a white circular chip. That is the one presentation all three brands' usage
+  // guidelines allow without recolouring the mark itself, and it is the only
+  // way TikTok's black circle stays legible on a near-black bar.
+  var SOCIAL_PROFILES = [
+    ["https://www.instagram.com/identityaesthetics/", "instagram", "Instagram"],
+    ["https://www.facebook.com/identityAestheticCenters/", "facebook", "Facebook"],
+    ["https://www.tiktok.com/@identityaestheticcenter", "tiktok", "TikTok"]
+  ];
+
+  // The <img> carries an empty alt because the anchor already has an
+  // aria-label; giving both a name makes screen readers announce it twice.
+  function socialLinksMarkup() {
+    return SOCIAL_PROFILES.map(function (profile) {
+      return '<a href="' + profile[0] + '" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on ' + profile[2] + '">' +
+             '<span class="social-chip" aria-hidden="true"><img src="/images/social/' + profile[1] + '.png" alt="" width="128" height="128" loading="lazy" decoding="async"></span>' +
+             '<b>' + profile[2] + '</b></a>';
+    }).join("");
+  }
+
+  // One journal page breaks a feature band out of the article column with the
+  // classic `margin: … calc(50% - 50vw)` full-bleed trick. That trick is only
+  // correct when the column is centred in the viewport. On desktop the column
+  // sits to the right of a sticky table-of-contents, so `50%` of the column is
+  // nowhere near `50vw` of the screen and the band overshoots the right edge,
+  // scrolling the whole page sideways by ~150px. Measure where the band
+  // actually starts and derive both margins from that instead.
+  function correctFullBleedBands() {
+    var bands = document.querySelectorAll('[style*="50% - 50vw"]');
+    if (!bands.length) return;
+    var frame = null;
+    function apply() {
+      frame = null;
+      for (var i = 0; i < bands.length; i++) {
+        var band = bands[i];
+        band.style.marginLeft = "0px";
+        band.style.marginRight = "0px";
+        var left = band.getBoundingClientRect().left + (window.pageXOffset || 0);
+        var width = band.offsetWidth;
+        var viewport = document.documentElement.clientWidth;
+        band.style.marginLeft = -Math.round(left) + "px";
+        band.style.marginRight = -Math.round(viewport - left - width) + "px";
+      }
+    }
+    function schedule() {
+      if (frame === null) frame = window.requestAnimationFrame(apply);
+    }
+    apply();
+    window.addEventListener("resize", schedule);
+  }
+
   function enhanceSocialReach() {
-    var profiles = [
-      ["https://www.instagram.com/identityaesthetics/", "IG", "Instagram"],
-      ["https://www.facebook.com/identityAestheticCenters/", "FB", "Facebook"],
-      ["https://www.tiktok.com/@identityaestheticcenter", "TT", "TikTok"]
-    ];
     function build(className) {
       var nav = document.createElement("nav");
       nav.className = className;
       nav.setAttribute("aria-label", "Follow Identity Aesthetics");
-      nav.innerHTML = profiles.map(function (p) {
-        return '<a href="' + p[0] + '" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on ' + p[2] + '">' +
-               '<span aria-hidden="true">' + p[1] + '</span><b>' + p[2] + '</b></a>';
-      }).join("");
+      nav.innerHTML = socialLinksMarkup();
       return nav;
     }
     var topbar = document.querySelector(".topbar .wrap");
@@ -457,7 +502,7 @@
       }
       social.className = "footer-social-links";
       social.setAttribute("aria-label", "Follow Identity Aesthetics");
-      social.innerHTML = '<a href="https://www.instagram.com/identityaesthetics/" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on Instagram"><span aria-hidden="true">IG</span><b>Instagram</b></a><a href="https://www.facebook.com/identityAestheticCenters/" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on Facebook"><span aria-hidden="true">FB</span><b>Facebook</b></a><a href="https://www.tiktok.com/@identityaestheticcenter" target="_blank" rel="noopener noreferrer" aria-label="Identity Aesthetics on TikTok"><span aria-hidden="true">TT</span><b>TikTok</b></a>';
+      social.innerHTML = socialLinksMarkup();
 
       if (!brandColumn.querySelector(".legitscript-trust")) {
         var certification = document.createElement("div");
@@ -739,5 +784,6 @@
   buildMegaNavigation();
   enhanceFooterTrust();
   enhanceSocialReach();
+  correctFullBleedBands();
   buildLuxurySearch();
 })();
