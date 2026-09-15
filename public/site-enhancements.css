@@ -61,11 +61,27 @@
 /* Luxury predictive site search */
 .search-open{overflow:hidden}
 .search-open .mobile-action-bar,.search-open .peptide-safety-float,.search-open ageless-embed-launcher,.search-open .ia-ageless-fallback{display:none!important}
-.ia-ageless-fallback{position:fixed;z-index:2147483645;right:24px;bottom:24px;display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border:1px solid rgba(255,255,255,.22);border-radius:12px;background:#805716;color:#fff!important;box-shadow:0 8px 32px rgba(0,0,0,.25);font:600 16px/1.2 system-ui,-apple-system,sans-serif;text-decoration:none!important;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+/* The Ageless "See Your Future Self" launcher. It was a flat brown pill in a
+   system font - the one element on the site that did not look like it
+   belonged to the brand, which is a poor way to advertise the thing you want
+   people to click. It now uses the same gold gradient and uppercase Jost as
+   the Book Now button, so it reads as a real call to action. */
+.ia-ageless-fallback{position:fixed;z-index:2147483645;right:24px;bottom:24px;display:inline-flex;align-items:center;gap:11px;padding:15px 26px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:linear-gradient(120deg,#d9bc7f 0%,#b3924f 45%,#8c6d33 100%);color:#fff!important;box-shadow:0 12px 36px rgba(58,42,16,.36),0 2px 8px rgba(0,0,0,.2);font:500 13px/1.2 'Jost',system-ui,-apple-system,sans-serif;letter-spacing:.11em;text-transform:uppercase;text-decoration:none!important;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+/* One quiet entrance so the eye catches it once, rather than a pulse that
+   nags for the whole visit. Honoured only where motion is welcome. */
+/* Fade and scale only - no downward translate. An entrance that starts the
+   button 16px lower slides it through the booking bar on a phone, covering
+   Book Now for half a second on every page load. */
+@keyframes iaAgelessIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.ia-ageless-fallback{animation:iaAgelessIn .55s .9s both cubic-bezier(.2,.8,.2,1)}
+@media(prefers-reduced-motion:reduce){.ia-ageless-fallback{animation:none}}
 .ia-ageless-fallback i{font-size:15px;font-style:normal;opacity:.82}
-.ia-ageless-fallback:hover{background:#6f4a11;box-shadow:0 12px 38px rgba(0,0,0,.3);transform:translateY(-2px)}
+.ia-ageless-fallback:hover{filter:brightness(1.08);box-shadow:0 16px 44px rgba(58,42,16,.44),0 2px 8px rgba(0,0,0,.22);transform:translateY(-2px)}
 .ia-ageless-fallback:focus-visible{outline:3px solid #fff;outline-offset:3px}
-@media(max-width:759px){.ia-ageless-fallback{right:10px;bottom:78px;padding:11px 15px;font-size:13px}.ia-has-peptide-safety .ia-ageless-fallback{bottom:142px}}
+/* The booking bar occupies 10-66px from the bottom on a phone and is the
+   primary conversion path, so this clears it rather than competing with it.
+   The safety float stacks in the same lane on the pages that carry one. */
+@media(max-width:759px){.ia-ageless-fallback{right:10px;bottom:78px;padding:12px 18px;font-size:11px;letter-spacing:.09em;gap:8px}.ia-has-peptide-safety .ia-ageless-fallback{bottom:142px}}
 @media print{.ia-ageless-fallback{display:none!important}}
 .site-search-launcher{position:relative;flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;align-self:center;margin:0 3px 0 1px;padding:0;border:1px solid rgba(153,117,50,.38);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(244,237,222,.88));color:#8a682b;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 6px 16px rgba(74,56,25,.1);cursor:pointer;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}
 .site-search-launcher::after{content:"";position:absolute;inset:4px;border:1px solid rgba(165,130,61,.1);border-radius:50%;pointer-events:none}
