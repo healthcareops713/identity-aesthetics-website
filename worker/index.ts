@@ -309,8 +309,37 @@ const withPreviewNoindex = (url: URL, response: Response) => {
 // A preview host must do neither.
 const PREVIEW_ROBOTS = "User-agent: *\nDisallow: /\n";
 
+// www and the bare domain are both attached to this Worker, so without this the
+// entire site answers on two hostnames. The canonical tags tell search engines
+// which one counts, but only a 301 actually consolidates them - and it also
+// keeps analytics, cookies and shared links on one host. The bare domain wins
+// because every canonical, the sitemap and the JSON-LD already use it.
+const CANONICAL_HOST = "713botoxme.com";
+const WWW_HOST = `www.${CANONICAL_HOST}`;
+
+const canonicalHostRedirect = (url: URL): Response | null => {
+  if (url.hostname !== WWW_HOST) return null;
+
+  const target = new URL(url.toString());
+  target.hostname = CANONICAL_HOST;
+
+  // An old inbound link can be both www *and* a retired path. Resolving the
+  // legacy map against the already-corrected URL lands that visitor in one hop
+  // instead of bouncing them www -> bare -> new path. A 410 carries no location
+  // to borrow, so those fall through to the plain host redirect and are served
+  // as gone from the canonical host.
+  const legacy = legacyRedirect(target);
+  if (legacy && legacy.status >= 300 && legacy.status < 400) return legacy;
+
+  return Response.redirect(target.toString(), 301);
+};
+
 async function routeRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    // One canonical hostname, before anything else looks at the path
+    const hostRedirect = canonicalHostRedirect(url);
+    if (hostRedirect) return hostRedirect;
 
     // 301s from the previous WordPress site, before any other routing
     const redirect = legacyRedirect(url);
