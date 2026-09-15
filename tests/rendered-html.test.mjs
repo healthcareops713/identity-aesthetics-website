@@ -6,8 +6,18 @@ import test from "node:test";
 // patient-facing surface: noindex, absent from the sitemap, and not expected
 // to carry the site chrome.
 const INTERNAL_PAGES = new Set(["animated-logo-preview.html"]);
+
+// Not pages at all - files that merely end in .html. Google Search Console's
+// ownership token is a bare string with an .html extension, and its contents
+// have to stay byte-for-byte what Google issued, so none of the page checks
+// below apply to it. tests/google-site-verification.test.mjs guards it instead.
+const NON_PAGE_FILES = new Set(["google94cd8cd3b311c6ce.html"]);
+
 const patientPages = (names) =>
-  names.filter((name) => name.endsWith(".html") && !INTERNAL_PAGES.has(name));
+  names.filter(
+    (name) =>
+      name.endsWith(".html") && !INTERNAL_PAGES.has(name) && !NON_PAGE_FILES.has(name),
+  );
 
 // Stylesheets and scripts carry cache-busting query strings (?v=126) that
 // change whenever an asset is updated. Assert the asset, not the version.
