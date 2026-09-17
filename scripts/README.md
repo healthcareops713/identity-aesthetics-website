@@ -53,3 +53,26 @@ mismatch that Search Console will eventually report. Treat them as one edit.
 - `enhance-authority.mjs` - injected the site-wide authority/organization schema.
 - `differentiate-toxins.mjs` - the neurotoxin rewrite described above; kept as
   the worked example of the pattern.
+- `build-results-page.mjs` - builds `public/results.html` from another page's
+  chrome so the nav, footer and script tags cannot drift, and adds it to the
+  sitemap.
+- `check-nav-overflow.mjs` - layout guard. Run it after touching the header,
+  the `.wrap`, or any nav breakpoint.
+
+## Run the nav check after touching the header
+
+```
+npm run build && node scripts/check-nav-overflow.mjs
+```
+
+It walks every page at six viewport widths and fails if any page scrolls
+sideways or if the "Book Now" button comes within 8px of the right edge. It is
+not in `npm test` on purpose: the test suite is plain `node:test` and finishes
+in about two seconds, while this needs a real browser and takes minutes.
+
+It exists because on 2026-09-17, 86 of 95 pages overflowed by 8-18px at 1440px
+- the single most common laptop width - so nearly the whole site had a
+horizontal scrollbar and the primary booking CTA was clipped. The desktop mega
+nav switches on at exactly 1440px, which was also the width at which brand +
+links + actions stopped fitting. Nothing in the unit tests could have caught
+that, because it is not visible anywhere in the markup.

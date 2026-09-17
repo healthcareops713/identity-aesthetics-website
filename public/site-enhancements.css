@@ -356,3 +356,18 @@ footer .social a:hover,footer .social a:focus-visible{color:#e3cb96;border-color
    Between 1100 and 1439 both appear, which is harmless: the menu is closed
    until opened. */
 @media(min-width:1440px){.mnav-social{display:none}}
+
+/* The desktop mega nav switches on at exactly 1440px, which is also the width
+   at which it stops fitting: brand + links + actions needed ~1414px of content
+   box inside a 1352px one, pushing "Book Now" 18px past the right edge and
+   giving 86 of 95 pages a horizontal scrollbar on the most common laptop width.
+   This band reclaims that space where it costs least - the wrap's own padding
+   and the gaps between things - rather than shrinking the type further. */
+@media(min-width:1440px) and (max-width:1599px){
+  header.nav>.wrap{padding-left:12px;padding-right:12px;gap:8px;min-width:min(1400px,calc(100% - 24px))}
+  .nav .wrap>div:last-child{gap:6px}
+  .nav .btn{padding-left:11px;padding-right:11px;letter-spacing:.08em}
+  .ia-mega-trigger{padding-left:1px;padding-right:3px}
+  .ia-mega-direct>a{padding-left:5px!important;padding-right:1px!important}
+  nav.links.ia-mega-nav{min-width:0}
+}
