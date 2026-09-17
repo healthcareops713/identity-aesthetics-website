@@ -7,4 +7,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://identity-aesthetics-website.identity-aes-0781.chatgpt.site/sitemap.xml
+Sitemap: https://713botoxme.com/sitemap.xml
