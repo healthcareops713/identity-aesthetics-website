@@ -7,4 +7,4 @@
 #google_translate_element{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 .goog-te-banner-frame,.goog-te-balloon-frame,#goog-gt-tt,.goog-te-spinner-pos{display:none!important}
 body{top:0!important}
-@media(max-width:759px){.topbar .wrap{gap:8px}.topbar .wrap>span{white-space:nowrap}.language-switcher{margin-left:0}.language-switcher button{min-width:31px;padding:4px 6px}}
+@media(max-width:759px){.topbar .wrap{gap:8px;flex-wrap:wrap;height:auto;min-height:38px;padding-top:5px;padding-bottom:5px}.topbar .wrap>span{white-space:normal;min-width:0}.language-switcher{margin-left:0;flex:none}.language-switcher button{min-width:31px;padding:4px 6px}}

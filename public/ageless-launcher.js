@@ -29,7 +29,9 @@
 
     var link = document.createElement("a");
     link.className = "ia-ageless-fallback";
-    link.href = directUrl.toString();
+    var target = new URL(directUrl.toString());
+    target.searchParams.set("utm_medium", reason === "handset" ? "floating_handset" : "floating_fallback");
+    link.href = target.toString();
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.setAttribute("aria-label", "See Your Future Self with Ageless AI (opens in a new tab)");
@@ -70,9 +72,24 @@
     }, 200);
   }
 
+  // Phones get the direct link rather than the embed. Two reasons: the clinical
+  // stylesheet hides <ageless-embed-launcher> below 760px, so on a phone the
+  // button only ever appeared when the embed FAILED - the opposite of the
+  // intent - and the embed positions its own floating button, which lands on
+  // top of the booking bar. The direct link is ours to place and style, it sits
+  // clear of the bar, and on a phone a full-screen experience beats an in-page
+  // overlay anyway.
+  function isHandset() {
+    return window.matchMedia("(max-width: 759px)").matches;
+  }
+
   function start() {
     if (!approvedHosts.has(location.hostname.toLowerCase())) {
       showDirectFallback("unapproved-domain");
+      return;
+    }
+    if (isHandset()) {
+      showDirectFallback("handset");
       return;
     }
     initializeEmbed();
