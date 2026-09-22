@@ -204,7 +204,7 @@ const authorityGraph = {
       "@id": "https://713botoxme.com/team-ike-nwanonyiri#person",
       name: "Ike Nwanonyiri, MD",
       honorificSuffix: "MD",
-      jobTitle: "Chief Medical Officer",
+      jobTitle: "Chief Medical Officer – North & South Carolina",
       url: "https://713botoxme.com/team-ike-nwanonyiri",
       worksFor: { "@id": "https://713botoxme.com/#organization" },
       knowsAbout: ["Family medicine", "Men's health", "Regenerative medicine", "Sports medicine"],

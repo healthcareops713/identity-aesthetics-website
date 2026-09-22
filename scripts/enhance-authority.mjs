@@ -109,7 +109,7 @@ function centralGraph(file, html, clinical) {
     {'@type':'WebSite','@id':siteId,name:'Identity Aesthetics',url:`${base}/`,publisher:{'@id':orgId}},
     {
       '@type':'Person','@id':reviewerId,name:'Dallas Alvey, MD, DDS',honorificSuffix:'MD, DDS',
-      jobTitle:'Chief Medical Officer',url:`${base}/team-dallas-alvey.html`,worksFor:{'@id':orgId},
+      jobTitle:'Chief Medical Officer – Texas',url:`${base}/team-dallas-alvey.html`,worksFor:{'@id':orgId},
       alumniOf:[
         {'@type':'CollegeOrUniversity','name':'UT Southwestern Medical School'},
         {'@type':'CollegeOrUniversity','name':'University of Texas School of Dentistry at Houston'}
@@ -141,7 +141,7 @@ function centralGraph(file, html, clinical) {
   }
   if (file === 'team') {
     const people = [
-      ['Ike Nwanonyiri, MD','MD','Chief Medical Officer'],['Sarah Walker, APRN, FNP-C','APRN, FNP-C','Advanced Provider and Nutritionist'],
+      ['Ike Nwanonyiri, MD','MD','Chief Medical Officer – North & South Carolina'],['Sarah Walker, APRN, FNP-C','APRN, FNP-C','Advanced Provider and Nutritionist'],
       ['Astrid Ariano','','Licensed Esthetician'],
       ['Patricia, CLT','CLT','Office Administrator & Director'],['Samantha','','Patient Liaison'],
       ['Dameon Tryon','','Chief Executive Officer']
@@ -159,7 +159,7 @@ function pathways(file) {
 function reviewPanel(html) {
   const reviewDate = existingReviewDate(html);
   const pretty = new Date(`${reviewDate}T12:00:00Z`).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});
-  return `<section class="authority-review" aria-label="Editorial and medical review information"><div class="wrap"><div class="authority-review-card"><div class="authority-review-item"><span class="authority-review-label">Prepared by</span><a href="editorial-policy">Identity Aesthetics Clinical Editorial Team</a><p>Patient education developed from primary regulatory, labeling and professional sources.</p></div><div class="authority-review-item"><span class="authority-review-label">Medically reviewed by</span><a href="team-dallas-alvey">Dallas Alvey, MD, DDS</a><p>Chief Medical Officer · Aesthetic medicine, hormone optimization and peptide therapy.</p></div><div class="authority-review-item"><span class="authority-review-label">Evidence review</span><strong>${pretty}</strong><p><a href="editorial-policy">Read our editorial standards and update policy</a></p></div></div></div></section>`;
+  return `<section class="authority-review" aria-label="Editorial and medical review information"><div class="wrap"><div class="authority-review-card"><div class="authority-review-item"><span class="authority-review-label">Prepared by</span><a href="editorial-policy">Identity Aesthetics Clinical Editorial Team</a><p>Patient education developed from primary regulatory, labeling and professional sources.</p></div><div class="authority-review-item"><span class="authority-review-label">Medically reviewed by</span><a href="team-dallas-alvey">Dallas Alvey, MD, DDS</a><p>Chief Medical Officer – Texas · Aesthetic medicine, hormone optimization and peptide therapy.</p></div><div class="authority-review-item"><span class="authority-review-label">Evidence review</span><strong>${pretty}</strong><p><a href="editorial-policy">Read our editorial standards and update policy</a></p></div></div></div></section>`;
 }
 
 for (const file of fs.readdirSync(publicDir).filter(f=>f.endsWith('.html'))) {
