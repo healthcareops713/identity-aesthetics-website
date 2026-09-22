@@ -186,6 +186,7 @@
     "peptides":"Peptide Therapy",
     "treatment-physician-supervised-peptide-therapy":"Peptide Therapy",
     "treatment-hormone-optimization-men":"Hormone Optimization",
+    "treatment-erectile-dysfunction":"Erectile Dysfunction Treatment",
     "treatment-hormone-optimization-women":"Hormone Optimization"
   };
   document.querySelectorAll('a[href="book-consultation"]').forEach(function(link){
@@ -270,6 +271,7 @@
     {title:"Semaglutide",category:"Treatments",url:"treatment-semaglutide",description:"Physician-supervised GLP-1 weight-management consultation and ongoing care.",terms:"semaglutide ozempic wegovy glp1 weight loss appetite diabetes perdida peso apetito"},
     {title:"Tirzepatide",category:"Treatments",url:"treatment-tirzepatide",description:"Physician-supervised dual-action weight-management consultation and monitoring.",terms:"tirzepatide mounjaro zepbound glp1 gip weight loss appetite perdida peso apetito"},
     {title:"GLP-1 Weight-Loss Consultation",category:"Treatments",url:"treatment-glp1-weight-loss-consultation",description:"A medical evaluation for personalized weight-loss options and monitoring.",terms:"glp1 weight loss consultation obesity overweight semaglutide tirzepatide consulta perdida peso sobrepeso"},
+    {title:"Erectile Dysfunction (ED) Treatment",category:"Treatments",url:"treatment-erectile-dysfunction",description:"Physician-supervised ED evaluation with FDA-approved oral options, compounded care when clinically needed, and injection therapy started in-office.",terms:"ed erectile dysfunction impotence sildenafil viagra tadalafil cialis pde5 pde-5 trimix bimix alprostadil caverject edex injection men sexual health disfuncion erectil"},
     {title:"Hormone Optimization for Men",category:"Treatments",url:"treatment-hormone-optimization-men",description:"Physician-guided evaluation for fatigue, low drive, body-composition and hormone concerns.",terms:"men hormones testosterone trt low t fatigue libido muscle brain fog hormone optimization hombre testosterona cansancio libido"},
     {title:"Hormone Optimization for Women",category:"Treatments",url:"treatment-hormone-optimization-women",description:"Individualized evaluation for menopausal, perimenopausal and hormone-related concerns.",terms:"women hormones menopause perimenopause hot flashes fatigue libido sleep mood hrt mujer menopausia sofocos cansancio"},
     {title:"Physician-Supervised Peptide Therapy",category:"Treatments",url:"treatment-physician-supervised-peptide-therapy",description:"A safety-first consultation for clinically appropriate peptide-related goals.",terms:"peptide therapy physician supervised recovery sleep body composition wellness peptide consultation terapia peptidos medico"},
@@ -571,10 +573,11 @@
         description: "Explore medical weight management, hormone care, peptide therapy and telehealth access.",
         overview: { label: "Weight-Loss Overview", href: "weight-loss" },
         secondary: { label: "Telehealth", href: "telehealth" },
-        activeFiles: ["weight-loss", "total-woman-weight-loss", "treatment-glp1-weight-loss-consultation", "treatment-semaglutide", "treatment-tirzepatide", "peptides", "clinical-peptide-therapy", "peptide-program-women", "peptide-program-men", "treatment-physician-supervised-peptide-therapy", "treatment-hormone-optimization-men", "treatment-hormone-optimization-women", "telehealth"],
+        activeFiles: ["weight-loss", "total-woman-weight-loss", "treatment-glp1-weight-loss-consultation", "treatment-semaglutide", "treatment-tirzepatide", "peptides", "clinical-peptide-therapy", "peptide-program-women", "peptide-program-men", "treatment-physician-supervised-peptide-therapy", "treatment-hormone-optimization-men", "treatment-hormone-optimization-women", "treatment-erectile-dysfunction", "telehealth"],
         groups: [
           { title: "Medical Weight Management", links: [["The Total Woman Program", "total-woman-weight-loss"], ["GLP-1 Consultation", "treatment-glp1-weight-loss-consultation"], ["Semaglutide", "treatment-semaglutide"], ["Tirzepatide", "treatment-tirzepatide"], ["Weight-Loss Programs", "weight-loss"]] },
-          { title: "Hormone & Peptide Care", links: [["Clinical Peptide Therapy", "clinical-peptide-therapy"], ["Peptide Program for Women", "peptide-program-women"], ["Peptide Program for Men", "peptide-program-men"], ["Hormone Optimization for Women", "treatment-hormone-optimization-women"], ["Hormone Optimization for Men", "treatment-hormone-optimization-men"]] },
+          { title: "Men’s Health", links: [["ED Treatment", "treatment-erectile-dysfunction"], ["Hormone Optimization for Men", "treatment-hormone-optimization-men"], ["Peptide Program for Men", "peptide-program-men"]] },
+          { title: "Hormone & Peptide Care", links: [["Clinical Peptide Therapy", "clinical-peptide-therapy"], ["Peptide Program for Women", "peptide-program-women"], ["Hormone Optimization for Women", "treatment-hormone-optimization-women"]] },
           { title: "Access & Guidance", links: [["Telehealth Care", "telehealth"], ["Meet the Clinical Team", "team"], ["Frequently Asked Questions", "faq"], ["Book a Consultation", "book-consultation"]] }
         ]
       },

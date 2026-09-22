@@ -9,7 +9,7 @@ const INTERESTS = new Set([
   "Injectables & Facial Balancing", "Botox / Dysport / Xeomin / Jeuveau", "Dermal or Lip Filler",
   "Laser Rejuvenation / LaseMD / Sciton BBL", "Facials / Lashes / Brows / Skin",
   "Microneedling / Dermaplaning", "Body Contouring", "Laser Hair Removal",
-  "Vaginal Rejuvenation with HIFU", "GLP-1 Medical Weight Loss", "Hormone Optimization",
+  "Vaginal Rejuvenation with HIFU", "GLP-1 Medical Weight Loss", "Hormone Optimization", "Erectile Dysfunction Treatment",
   "Peptide Therapy", "Not Sure — Help Me Choose",
 ]);
 const CARE_MODES = new Set(["In-office", "Telehealth"]);
