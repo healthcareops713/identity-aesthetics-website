@@ -2,6 +2,8 @@
 (function(){
   var OM='https://www.optimantra.com/optimus/patient/patientaccess/';
   var CON={pid:'M2hRWi96bXhEYm1lc1RmL0d2eVZ0UT09',lid:'dWlWZGxqOUtQNGxWRWhYQlF3VUdEdz09'};
+  var FUL={pid:'LzE4RzJRNmxQNXBFUjEwZGZUNEFMUT09',lid:'NjJQendiMUpOZUZGRnl4eFFYRlhGdz09'};
+  var MI=['botox','filler','filler-correction','pdo','kybella','hair','vaginal','ed-shockwave','consult','holiday'];
   var PHONE='713-268-6963';
   var S={
     'botox':['Botox, Dysport, Jeuveau & Xeomin','Botox, Dysport, Jeuveau y Xeomin','1540308952','U2hGUWpJM1ZEMHVZdllnb0VQL0JxZz09'],
@@ -48,7 +50,7 @@
   };
   var NAMES={'clinical peptide therapy':'peptides','peptide program for women':'peptides','peptide program for men':'peptides','total woman weight-loss program':'total-woman','longevity medicine':'longevity','erectile dysfunction treatment':'ed','sermorelin therapy':'peptides','not sure — help me choose':'consult'};
   var path=location.pathname.replace(/\/+$/,'')||'/'; var es=/^\/es(\/|$)/.test(path); var slug=path.replace(/^\/es/,'').replace(/^\//,'');
-  function link(k){var s=S[k]; return OM+'practsNslotsNEW?sid='+encodeURIComponent(s[3])+'&unCryptedSid='+s[2]+'&pid='+encodeURIComponent(CON.pid)+'&lid='+encodeURIComponent(CON.lid);}
+  function link(k,L){L=L||CON;var s=S[k]; return OM+'practsNslotsNEW?sid='+encodeURIComponent(s[3])+'&unCryptedSid='+s[2]+'&pid='+encodeURIComponent(L.pid)+'&lid='+encodeURIComponent(L.lid);}
   function tele(){return (es?'/es':'')+'/telehealth#states';}
   function pageKey(){for(var k in PAGE){if(PAGE[k].indexOf(slug)>-1)return k;}return null;}
   function keyFromHref(h){try{var u=new URL(h,location.origin);var s=(u.searchParams.get('service')||'').trim();if(!s)return null;if(S[s]||MED.indexOf(s)>-1)return s;return NAMES[s.toLowerCase()]||'consult';}catch(e){return null;}}
@@ -67,11 +69,11 @@
     if(!/^\/(es\/)?book-consultation$/.test(path))return;
     var p=new URLSearchParams(location.search); var raw=(p.get('service')||'').trim(); var k=raw?(S[raw]||MED.indexOf(raw)>-1?raw:(NAMES[raw.toLowerCase()]||'consult')):null;
     if(k&&MED.indexOf(k)>-1){location.replace(tele());return;}
-    var T=es?{h:'Reserve en línea',sub:'Elija su servicio y su horario en nuestra clínica de Conroe. Recibirá sus formularios de consentimiento al reservar.',btn:'Reservar ',all:'Ver todos los servicios y horarios',other:'Houston, Fulshear y Katy: llame o envíe un mensaje de texto al '+PHONE+' para reservar.',med:'¿Pérdida de peso, hormonas, péptidos o DE? Se atienden por telemedicina:',medb:'Reservar telemedicina',pick:'O elija un servicio:'}:{h:'Book online',sub:'Choose your service and time at our Conroe clinic. Your consent forms are sent when you book.',btn:'Book ',all:'See all services & times',other:'Houston, Fulshear & Katy: call or text '+PHONE+' to book.',med:'Weight loss, hormones, peptides or ED? Those are seen by telehealth:',medb:'Book telehealth',pick:'Or pick a service:'};
+    var T=es?{h:'Reserve en línea',sub:'Elija su servicio, su clínica y su horario. Recibirá sus formularios de consentimiento al reservar.',btn:'Reservar ',con:' en Conroe',ful:'Fulshear (viernes)',all:'Ver todos los servicios y horarios',other:'Houston y Katy: llame o envíe un mensaje de texto al '+PHONE+' para reservar.',med:'¿Pérdida de peso, hormonas, péptidos o DE? Se atienden por telemedicina:',medb:'Reservar telemedicina',pick:'O elija un servicio:'}:{h:'Book online',sub:'Choose your service, clinic and time. Your consent forms are sent when you book.',btn:'Book ',con:' in Conroe',ful:'Fulshear (Fridays)',all:'See all services & times',other:'Houston & Katy: call or text '+PHONE+' to book.',med:'Weight loss, hormones, peptides or ED? Those are seen by telehealth:',medb:'Book telehealth',pick:'Or pick a service:'};
     var allUrl=OM+'servicesall?pid='+CON.pid+'&lid='+CON.lid;
     var h='<section id="ia-book-hub" style="padding:48px 0;background:#faf7f2"><div class="wrap" style="max-width:1100px;margin:0 auto;padding:0 24px">';
     h+='<span class="eyebrow">'+T.h+'</span>';
-    if(k&&S[k]){h+='<h2 style="margin:8px 0 10px">'+S[k][es?1:0]+'</h2><p>'+T.sub+'</p><div class="cta" style="display:flex;gap:14px;flex-wrap:wrap;margin:18px 0"><a class="btn btn-gold" href="'+link(k)+'">'+T.btn+S[k][es?1:0]+'</a><a class="btn btn-line" href="'+allUrl+'">'+T.all+'</a></div>';}
+    if(k&&S[k]){h+='<h2 style="margin:8px 0 10px">'+S[k][es?1:0]+'</h2><p>'+T.sub+'</p><div class="cta" style="display:flex;gap:14px;flex-wrap:wrap;margin:18px 0"><a class="btn btn-gold" href="'+link(k)+'">'+T.btn+S[k][es?1:0]+T.con+'</a>'+(MI.indexOf(k)>-1?'<a class="btn btn-line" href="'+link(k,FUL)+'">'+T.ful+'</a>':'')+'<a class="btn btn-line" href="'+allUrl+'">'+T.all+'</a></div>';}
     else{h+='<h2 style="margin:8px 0 10px">'+(es?'Reserve su cita':'Book your appointment')+'</h2><p>'+T.sub+'</p><div class="cta" style="display:flex;gap:14px;flex-wrap:wrap;margin:18px 0"><a class="btn btn-gold" href="'+allUrl+'">'+T.all+'</a></div><p style="margin-top:6px;font-weight:600">'+T.pick+'</p><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">';
       ['botox','filler','lhr','lasemd','bbl','microneedling','facial','glo2','dermaplaning','brow','lash','waxing','kybella','pdo','velashape','ultherapy','hair','vaginal','ed-shockwave','consult'].forEach(function(x){h+='<a class="btn btn-line btn-sm" href="'+link(x)+'">'+S[x][es?1:0]+'</a>';});
       h+='</div>';}
@@ -80,7 +82,7 @@
     var wrap=document.createElement('div'); wrap.innerHTML=h; var node=wrap.firstChild;
     if(first&&first.parentNode){first.parentNode.insertBefore(node,first.nextSibling);}else{main.insertBefore(node,main.firstChild);}
     // Online booking is Conroe-only until other clinics have OptiMantra schedules
-    document.querySelectorAll('a[href*="servicesall"]').forEach(function(a){ if(/Houston|Fulshear|Katy/i.test(a.textContent)){a.setAttribute('href','sms:'+PHONE.replace(/-/g,''));a.removeAttribute('target');a.textContent=(es?'Mensaje de texto para reservar · ':'Text to book · ')+a.textContent.replace(/^(Book|Reservar)\s*/i,'');} });
+    document.querySelectorAll('a[href*="servicesall"]').forEach(function(a){ if(/Houston|Katy/i.test(a.textContent)){a.setAttribute('href','sms:'+PHONE.replace(/-/g,''));a.removeAttribute('target');a.textContent=(es?'Mensaje de texto para reservar · ':'Text to book · ')+a.textContent.replace(/^(Book|Reservar)\s*/i,'');} });
     if(k&&location.hash!=='#ia-book-hub'){setTimeout(function(){node.scrollIntoView({behavior:'smooth',block:'start'});},300);}
   }
   function go(){rewrite();hub();}
