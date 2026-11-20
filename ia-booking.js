@@ -52,7 +52,7 @@
   function tele(){return (es?'/es':'')+'/telehealth#states';}
   function pageKey(){for(var k in PAGE){if(PAGE[k].indexOf(slug)>-1)return k;}return null;}
   function keyFromHref(h){try{var u=new URL(h,location.origin);var s=(u.searchParams.get('service')||'').trim();if(!s)return null;if(S[s]||MED.indexOf(s)>-1)return s;return NAMES[s.toLowerCase()]||'consult';}catch(e){return null;}}
-  function inChrome(a){return !!a.closest('.site-header,#masthead,#ia-header,.ia-header,.ia-topbar,.topbar,footer,.site-footer,nav');}
+  function inChrome(a){return !!a.closest('header.nav,.mobile-action-bar,footer,.site-footer,#masthead');}
   function rewrite(){
     var pk=pageKey();
     document.querySelectorAll('a[href*="book-consultation"]').forEach(function(a){
