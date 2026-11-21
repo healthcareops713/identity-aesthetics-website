@@ -83,7 +83,7 @@
     var wrap=document.createElement('div'); wrap.innerHTML=h; var node=wrap.firstChild;
     if(first&&first.parentNode){first.parentNode.insertBefore(node,first.nextSibling);}else{main.insertBefore(node,main.firstChild);}
     // Online booking is Conroe-only until other clinics have OptiMantra schedules
-    document.querySelectorAll('a[href*="servicesall"]').forEach(function(a){ if(/Houston|Katy/i.test(a.textContent)){a.setAttribute('href','sms:'+PHONE.replace(/-/g,''));a.removeAttribute('target');a.textContent=(es?'Mensaje de texto para reservar · ':'Text to book · ')+a.textContent.replace(/^(Book|Reservar)\s*/i,'');} });
+    document.querySelectorAll('a[href*="servicesall"]').forEach(function(a){ if(/Houston|Katy/i.test(a.textContent)){a.setAttribute('href','sms:8329799105');a.removeAttribute('target');a.textContent=(es?'Mensaje de texto para reservar · ':'Text to book · ')+a.textContent.replace(/^(Book|Reservar)\s*/i,'');} });
     if(k&&location.hash!=='#ia-book-hub'){setTimeout(function(){node.scrollIntoView({behavior:'smooth',block:'start'});},300);}
   }
   function go(){rewrite();hub();}
