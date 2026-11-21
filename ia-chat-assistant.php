@@ -2,7 +2,7 @@
 /**
  * Plugin Name: IA Chat Assistant
  * Description: Website chat assistant for 713botoxme.com. Answers common questions from the site's own
- *              content using the OpenAI API (ChatGPT), captures leads (contact info + service interest, with consent)
+ *              content using Claude (default) or ChatGPT, chosen in settings, captures leads (contact info + service interest, with consent)
  *              into a database table, and emails a daily digest of new leads for human follow-up.
  *              Health details are never stored or emailed. Added 2026-11-21.
  */
@@ -21,19 +21,30 @@ define( 'IA_CHAT_OPT', 'ia_chat_settings' );
 function ia_chat_settings() {
 	$defaults = array(
 		'enabled'      => 0,
+		'provider'     => 'claude',
 		'api_key'      => '',
-		'model'        => 'gpt-5-mini',
+		'openai_key'   => '',
+		'model'        => '',
 		'name'         => 'Ava',
 		'notify_email' => 'info@713botoxme.com',
 		'digest_hour'  => 8,
 	);
 	$s = get_option( IA_CHAT_OPT, array() );
-	return array_merge( $defaults, is_array( $s ) ? $s : array() );
+	$s = array_merge( $defaults, is_array( $s ) ? $s : array() );
+	if ( '' === $s['model'] ) {
+		$s['model'] = 'openai' === $s['provider'] ? 'gpt-5-mini' : 'claude-sonnet-5-5';
+	}
+	return $s;
+}
+
+function ia_chat_key() {
+	$s = ia_chat_settings();
+	return (string) ( 'openai' === $s['provider'] ? $s['openai_key'] : $s['api_key'] );
 }
 
 function ia_chat_ready() {
 	$s = ia_chat_settings();
-	return ! empty( $s['enabled'] ) && ! empty( $s['api_key'] );
+	return ! empty( $s['enabled'] ) && '' !== ia_chat_key();
 }
 
 /* ------------------------------------------------------------------ */
@@ -210,7 +221,7 @@ function ia_chat_tools() {
 /**
  * Call the OpenAI Chat Completions API (ChatGPT). Returns choices[0] or WP_Error.
  */
-function ia_chat_call_llm( $messages ) {
+function ia_chat_call_openai( $messages ) {
 	$s    = ia_chat_settings();
 	$kb   = (string) get_option( 'ia_chat_kb', '' );
 	$body = array(
@@ -227,7 +238,7 @@ function ia_chat_call_llm( $messages ) {
 		array(
 			'timeout' => 60,
 			'headers' => array(
-				'Authorization' => 'Bearer ' . $s['api_key'],
+				'Authorization' => 'Bearer ' . $s['openai_key'],
 				'Content-Type'  => 'application/json',
 			),
 			'body'    => wp_json_encode( $body ),
@@ -245,6 +256,90 @@ function ia_chat_call_llm( $messages ) {
 		return new WP_Error( 'ia_chat_api', $msg );
 	}
 	return $data['choices'][0];
+}
+
+
+/**
+ * Dispatcher: returns an OpenAI-shaped choice array (message.content, message.tool_calls).
+ */
+function ia_chat_call_llm( $messages ) {
+	return 'openai' === ia_chat_settings()['provider'] ? ia_chat_call_openai( $messages ) : ia_chat_call_claude( $messages );
+}
+
+/**
+ * Call the Anthropic Messages API (Claude), translating to/from the OpenAI-style message list used here.
+ */
+function ia_chat_call_claude( $messages ) {
+	$s     = ia_chat_settings();
+	$kb    = (string) get_option( 'ia_chat_kb', '' );
+	$tools = array();
+	foreach ( ia_chat_tools() as $t ) {
+		$tools[] = array( 'name' => $t['function']['name'], 'description' => $t['function']['description'], 'input_schema' => $t['function']['parameters'] );
+	}
+	$msgs = array();
+	foreach ( $messages as $m ) {
+		if ( 'tool' === $m['role'] ) {
+			$block = array( 'type' => 'tool_result', 'tool_use_id' => $m['tool_call_id'], 'content' => (string) $m['content'] );
+			$last  = count( $msgs ) - 1;
+			if ( $last >= 0 && 'user' === $msgs[ $last ]['role'] && is_array( $msgs[ $last ]['content'] ) ) {
+				$msgs[ $last ]['content'][] = $block;
+			} else {
+				$msgs[] = array( 'role' => 'user', 'content' => array( $block ) );
+			}
+		} elseif ( 'assistant' === $m['role'] && ! empty( $m['tool_calls'] ) ) {
+			$content = array();
+			if ( ! empty( $m['content'] ) ) {
+				$content[] = array( 'type' => 'text', 'text' => (string) $m['content'] );
+			}
+			foreach ( $m['tool_calls'] as $c ) {
+				$args      = json_decode( (string) $c['function']['arguments'], true );
+				$content[] = array( 'type' => 'tool_use', 'id' => $c['id'], 'name' => $c['function']['name'], 'input' => is_array( $args ) && $args ? $args : new stdClass() );
+			}
+			$msgs[] = array( 'role' => 'assistant', 'content' => $content );
+		} else {
+			$msgs[] = array( 'role' => $m['role'], 'content' => (string) $m['content'] );
+		}
+	}
+	$body = array(
+		'model'      => $s['model'],
+		'max_tokens' => 800,
+		'system'     => array( array( 'type' => 'text', 'text' => ia_chat_system_prompt() . "\n" . $kb, 'cache_control' => array( 'type' => 'ephemeral' ) ) ),
+		'tools'      => $tools,
+		'messages'   => $msgs,
+	);
+	$r = wp_remote_post(
+		'https://api.anthropic.com/v1/messages',
+		array(
+			'timeout' => 60,
+			'headers' => array( 'x-api-key' => $s['api_key'], 'anthropic-version' => '2023-06-01', 'content-type' => 'application/json' ),
+			'body'    => wp_json_encode( $body ),
+		)
+	);
+	if ( is_wp_error( $r ) ) {
+		update_option( 'ia_chat_last_error', current_time( 'mysql' ) . ' ' . $r->get_error_message(), false );
+		return new WP_Error( 'ia_chat_http', $r->get_error_message() );
+	}
+	$code = (int) wp_remote_retrieve_response_code( $r );
+	$data = json_decode( wp_remote_retrieve_body( $r ), true );
+	if ( 200 !== $code || ! is_array( $data ) || ! isset( $data['content'] ) ) {
+		$msg = is_array( $data ) && isset( $data['error']['message'] ) ? $data['error']['message'] : 'HTTP ' . $code;
+		update_option( 'ia_chat_last_error', current_time( 'mysql' ) . ' ' . $msg, false );
+		return new WP_Error( 'ia_chat_api', $msg );
+	}
+	$text  = '';
+	$calls = array();
+	foreach ( $data['content'] as $b ) {
+		if ( 'text' === $b['type'] ) {
+			$text .= $b['text'];
+		} elseif ( 'tool_use' === $b['type'] ) {
+			$calls[] = array( 'id' => $b['id'], 'type' => 'function', 'function' => array( 'name' => $b['name'], 'arguments' => wp_json_encode( $b['input'] ) ) );
+		}
+	}
+	$message = array( 'role' => 'assistant', 'content' => $text );
+	if ( $calls ) {
+		$message['tool_calls'] = $calls;
+	}
+	return array( 'message' => $message );
 }
 
 /* ------------------------------------------------------------------ */
@@ -489,12 +584,21 @@ function ia_chat_settings_page() {
 	$msg = '';
 	if ( isset( $_POST['ia_chat_save'] ) && check_admin_referer( 'ia_chat_settings' ) ) {
 		$s['enabled']      = empty( $_POST['enabled'] ) ? 0 : 1;
-		$s['model']        = sanitize_text_field( wp_unslash( $_POST['model'] ?? $s['model'] ) );
+		$s['model']        = sanitize_text_field( wp_unslash( $_POST['model'] ?? '' ) );
 		$s['name']         = sanitize_text_field( wp_unslash( $_POST['name'] ?? $s['name'] ) );
 		$s['notify_email'] = sanitize_email( wp_unslash( $_POST['notify_email'] ?? $s['notify_email'] ) );
-		$key               = trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ?? '' ) ) );
+		$prov = sanitize_text_field( wp_unslash( $_POST['provider'] ?? 'claude' ) );
+		if ( $prov !== $s['provider'] ) {
+			$s['model'] = ''; // switch to that provider's default model
+		}
+		$s['provider'] = 'openai' === $prov ? 'openai' : 'claude';
+		$key = trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ?? '' ) ) );
 		if ( '' !== $key ) {
 			$s['api_key'] = $key;
+		}
+		$okey = trim( sanitize_text_field( wp_unslash( $_POST['openai_key'] ?? '' ) ) );
+		if ( '' !== $okey ) {
+			$s['openai_key'] = $okey;
 		}
 		update_option( IA_CHAT_OPT, $s, false );
 		$msg = 'Settings saved.';
@@ -515,8 +619,10 @@ function ia_chat_settings_page() {
 			<?php wp_nonce_field( 'ia_chat_settings' ); ?>
 			<table class="form-table">
 				<tr><th>Show chat on website</th><td><label><input type="checkbox" name="enabled" value="1" <?php checked( $s['enabled'], 1 ); ?>> Enabled</label></td></tr>
-				<tr><th>OpenAI API key</th><td><input type="password" name="api_key" class="regular-text" autocomplete="off" placeholder="<?php echo $s['api_key'] ? 'Saved (ends ' . esc_attr( substr( $s['api_key'], -4 ) ) . ') — paste a new key to replace' : 'Paste your key from platform.openai.com/api-keys'; ?>"></td></tr>
-				<tr><th>Model</th><td><input type="text" name="model" value="<?php echo esc_attr( $s['model'] ); ?>" class="regular-text"></td></tr>
+				<tr><th>AI engine</th><td><select name="provider"><option value="claude" <?php selected( $s['provider'], 'claude' ); ?>>Claude (Anthropic)</option><option value="openai" <?php selected( $s['provider'], 'openai' ); ?>>ChatGPT (OpenAI)</option></select></td></tr>
+				<tr><th>Claude API key</th><td><input type="password" name="api_key" class="regular-text" autocomplete="off" placeholder="<?php echo $s['api_key'] ? 'Saved (ends ' . esc_attr( substr( $s['api_key'], -4 ) ) . ') — paste a new key to replace' : 'Paste your key from console.anthropic.com'; ?>"></td></tr>
+				<tr><th>OpenAI API key</th><td><input type="password" name="openai_key" class="regular-text" autocomplete="off" placeholder="<?php echo $s['openai_key'] ? 'Saved (ends ' . esc_attr( substr( $s['openai_key'], -4 ) ) . ') — paste a new key to replace' : 'Optional: from platform.openai.com/api-keys'; ?>"></td></tr>
+				<tr><th>Model</th><td><input type="text" name="model" value="<?php echo esc_attr( $s['model'] ); ?>" class="regular-text"> <span class="description">Leave blank for the default (claude-sonnet-5-5 or gpt-5-mini).</span></td></tr>
 				<tr><th>Assistant name</th><td><input type="text" name="name" value="<?php echo esc_attr( $s['name'] ); ?>"></td></tr>
 				<tr><th>Daily lead email to</th><td><input type="email" name="notify_email" value="<?php echo esc_attr( $s['notify_email'] ); ?>" class="regular-text"> <span class="description">Sent every morning at <?php echo (int) $s['digest_hour']; ?>:00 when there are new leads.</span></td></tr>
 			</table>
