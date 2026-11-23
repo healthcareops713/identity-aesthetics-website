@@ -700,7 +700,7 @@ add_action(
 <style id="ia-chat-css">
 #ia-chat-btn{position:fixed;right:24px;bottom:118px;z-index:99998;display:flex;align-items:center;gap:8px;background:#f6d4dc;color:#5a2433;border:1px solid #ecbcc8;border-radius:28px;padding:12px 18px;font:600 15px/1.2 inherit;box-shadow:0 6px 20px rgba(0,0,0,.2);cursor:pointer}
 #ia-chat-btn:hover{background:#f0c3ce}
-#ia-chat-panel{position:fixed;right:24px;bottom:118px;z-index:99999;width:370px;max-width:calc(100vw - 24px);height:540px;max-height:calc(100vh - 140px);background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);display:none;flex-direction:column;overflow:hidden;font-family:inherit}
+#ia-chat-panel{position:fixed;right:24px;bottom:118px;z-index:2147483600;width:370px;max-width:calc(100vw - 24px);height:540px;max-height:calc(100vh - 140px);background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);display:none;flex-direction:column;overflow:hidden;font-family:inherit}
 #ia-chat-panel.open{display:flex}
 #ia-chat-head{background:#f6d4dc;color:#5a2433;border-bottom:1px solid #ecbcc8;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
 #ia-chat-head b{font-size:16px}#ia-chat-head small{display:block;opacity:.8;font-size:12px}
