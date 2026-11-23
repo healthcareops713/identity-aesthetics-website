@@ -683,8 +683,10 @@ add_action(
 /* Front-end widget                                                    */
 /* ------------------------------------------------------------------ */
 
+// The theme's footer.php does not call wp_footer(), so the widget is printed in <head> as a
+// <template> and mounted into <body> by script once the DOM is ready.
 add_action(
-	'wp_footer',
+	'wp_head',
 	function () {
 		if ( is_admin() || ! ia_chat_ready() ) {
 			return;
@@ -715,15 +717,17 @@ add_action(
 .ia-typing{opacity:.6;font-style:italic}
 @media(max-width:600px){#ia-chat-btn{bottom:104px;right:14px;padding:11px 15px}#ia-chat-panel{right:12px;bottom:12px;height:calc(100vh - 90px);max-height:none}}
 </style>
-<button id="ia-chat-btn" type="button" aria-label="Open chat"><span aria-hidden="true">&#128172;</span> Questions? Chat with us</button>
+<template id="ia-chat-tpl"><button id="ia-chat-btn" type="button" aria-label="Open chat"><span aria-hidden="true">&#128172;</span> Questions? Chat with us</button>
 <div id="ia-chat-panel" role="dialog" aria-label="Chat with Identity Aesthetics">
 	<div id="ia-chat-head"><div><b><?php echo esc_html( $s['name'] ); ?> · Identity Aesthetics</b><small>Virtual assistant · a real team member follows up</small></div><button id="ia-chat-close" type="button" aria-label="Close chat">&times;</button></div>
 	<div id="ia-chat-log" aria-live="polite"></div>
 	<div id="ia-chat-note">Please don't share medical details here. By sharing your contact info you agree we may call, text or email you about your request. <a href="/privacy">Privacy</a></div>
 	<form id="ia-chat-form"><textarea id="ia-chat-in" rows="1" placeholder="Type your message…" maxlength="1500"></textarea><button id="ia-chat-send" type="submit">Send</button></form>
-</div>
+</div></template>
 <script>
 (function(){
+function iaChatBoot(){
+var tpl=document.getElementById('ia-chat-tpl'); if(!tpl||document.getElementById('ia-chat-btn'))return; document.body.appendChild(tpl.content.cloneNode(true));
 var C=<?php echo wp_json_encode( $cfg ); ?>;
 var SS=window.sessionStorage, LS=window.localStorage;
 function g(k){try{return SS.getItem(k)}catch(e){return null}}
@@ -753,9 +757,11 @@ fetch(C.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body
 .then(function(){busy=false})});
 if(hist.length&&g('ia_chat_open')==='1')open();
 window.addEventListener('pagehide',function(){s('ia_chat_open',panel.classList.contains('open')?'1':'0')});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iaChatBoot);else iaChatBoot();
 })();
 </script>
 		<?php
 	},
-	50
+	99
 );
