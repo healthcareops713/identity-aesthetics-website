@@ -507,7 +507,7 @@ add_action(
 	function () {
 		if ( ! wp_next_scheduled( 'ia_chat_daily' ) ) {
 			$s    = ia_chat_settings();
-			$tz   = wp_timezone();
+			$tz   = new DateTimeZone( 'America/Chicago' ); // site timezone is UTC; send at 8am Central
 			$next = new DateTime( 'today ' . (int) $s['digest_hour'] . ':00', $tz );
 			if ( $next->getTimestamp() <= time() ) {
 				$next->modify( '+1 day' );
